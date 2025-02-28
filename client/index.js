@@ -6,11 +6,11 @@ socket.on('connect', function() {
 });
 
 socket.on('message', function(msg) {
-    console.log("Received!!")
     console.log(msg)
     const chat = document.getElementById('chat');
     const message = document.createElement('div');
     message.textContent = msg;
+    message.style.marginBottom = "6px";
     chat.appendChild(message);
     chat.scrollTop = chat.scrollHeight;
 });
@@ -23,4 +23,8 @@ function joinLobby() {
     const input = document.getElementById('message');
     socket.emit('join lobby', {id:input.value})
     input.value = '';
+}
+
+function leaveLobby() {
+    socket.emit('leave lobby', {})
 }

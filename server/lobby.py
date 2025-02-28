@@ -6,12 +6,12 @@ class Lobby(object):
         return cls.instances
 
     @classmethod
-    def player_in_lobby(cls, player_id):
+    def get_lobby_from_player(cls, player_id):
         for lobby in Lobby.get_instances():
             for id in lobby.get_players():
                 if id == player_id:
-                    return True
-        return False
+                    return lobby
+        return None
     
     
     @classmethod
@@ -24,17 +24,26 @@ class Lobby(object):
 
     def __init__(self, owner_id):
         self.owner_id = owner_id
-        self.players_ids = [owner_id]
+        self.player_ids = [owner_id]
         Lobby.instances.append(self)
         self.lobby_id = len(Lobby.get_instances())
 
 
     def add_player(self, player_id):
-        if len(self.players_ids) < 6:
-            self.players_ids.append(player_id)
+        if len(self.player_ids) < 6:
+            self.player_ids.append(player_id)
             return True
         else:
             return False
+
+
+    def remove_player(self, player_id):
+        if player_id in self.player_ids:
+            self.player_ids.remove(player_id)
+            if len(self.player_ids) > 0:
+                self.owner_id = self.player_ids[0]
+            else:
+                pass # remove the lobby
 
 
     def get_id(self):
@@ -42,4 +51,4 @@ class Lobby(object):
     
 
     def get_players(self):
-        return self.players_ids
+        return self.player_ids

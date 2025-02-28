@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clue-less</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <style>
+        #chat {
+            width: 300px;
+            height: 200px;
+            border: 1px solid #000;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="message" placeholder="Lobby id here...">
+    <button onclick="joinLobby()">Join Lobby</button>
+    <button onclick="createLobby()">Create Lobby</button>
+
+    <script src="index.js"></script>
+</body>
+</html>

@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 import uuid
 from lobby import Lobby
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "themagnificent6_clueless"
 socketio = SocketIO(app, cors_allowed_origins="*")

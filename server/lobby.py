@@ -1,9 +1,11 @@
 class Lobby(object):
     instances = []
+    lobbies_created = 0
 
     @classmethod
     def get_instances(cls):
         return cls.instances
+
 
     @classmethod
     def get_lobby_from_player(cls, player_id):
@@ -22,11 +24,13 @@ class Lobby(object):
         return None
 
 
+
     def __init__(self, owner_id):
         self.owner_id = owner_id
         self.player_ids = [owner_id]
         Lobby.instances.append(self)
-        self.lobby_id = len(Lobby.get_instances())
+        self.lobby_id = lobbies_created # want to make this an eight digit code in the future for security.
+        lobbies_created += 1
 
 
     def add_player(self, player_id):

@@ -1,6 +1,6 @@
 lobbies_created = 0
 
-class Lobby(object):
+class Lobby():
     instances = []
 
     @classmethod

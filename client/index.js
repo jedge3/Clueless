@@ -28,3 +28,7 @@ function joinLobby() {
 function leaveLobby() {
     socket.emit('leave lobby', {})
 }
+
+function startLobby() {
+    socket.emit('start lobby', {})
+}

@@ -1,3 +1,5 @@
+from board import Board
+
 lobbies_created = 0
 
 class Lobby():
@@ -32,11 +34,12 @@ class Lobby():
         Lobby.instances.append(self)
         global lobbies_created
         self.lobby_id = lobbies_created # want to make this an eight digit code in the future for security.
+        self.board = None
         lobbies_created += 1
 
 
     def add_player(self, player_id):
-        if len(self.player_ids) < 6:
+        if len(self.player_ids) < 6 or self.Board is not None:
             self.player_ids.append(player_id)
             return True
         else:
@@ -51,6 +54,16 @@ class Lobby():
             else:
                 pass # remove the lobby
 
+
+    def start_game(self):
+        if len(self.player_ids) > 1:
+            self.board = Board(self)
+            return True
+        return False
+
+
+    def is_owner(self, player_id):
+        return self.owner_id == player_id
 
     def get_id(self):
         return self.lobby_id

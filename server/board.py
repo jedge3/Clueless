@@ -49,7 +49,7 @@ class Board():
         self.rooms["Study"].secret_pathway = self.rooms["Kitchen"]
         self.rooms["Kitchen"].secret_pathway = self.rooms["Study"]
         self.rooms["Lounge"].secret_pathway = self.rooms["Conservatory"]
-        self.rooms["Convervatory"].secret_pathway = self.rooms["Lounge"]
+        self.rooms["Conservatory"].secret_pathway = self.rooms["Lounge"]
 
         self.hallways = [
             Hallway(self.rooms["Study"], self.rooms["Hall"]),
@@ -59,7 +59,7 @@ class Board():
             Hallway(self.rooms["Lounge"], self.rooms["Dining Room"]),
             Hallway(self.rooms["Library"], self.rooms["Billard Room"]),
             Hallway(self.rooms["Billard Room"], self.rooms["Dining Room"]),
-            Hallway(self.rooms["Library"], self.rooms["Convservatory"]),
+            Hallway(self.rooms["Library"], self.rooms["Conservatory"]),
             Hallway(self.rooms["Billard Room"], self.rooms["Ball Room"]),
             Hallway(self.rooms["Dining Room"], self.rooms["Kitchen"]),
             Hallway(self.rooms["Conservatory"], self.rooms["Ball Room"]),
@@ -79,8 +79,6 @@ class Board():
                 card = random.choice(deck)
                 deck.remove(card)
                 self.characters[player_id].cards.append(card)
-
-
 
 
     def move():

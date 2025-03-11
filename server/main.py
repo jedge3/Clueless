@@ -3,7 +3,6 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 import uuid
 from lobby import Lobby
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "themagnificent6_clueless"
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -72,10 +71,25 @@ def leave_lobby(data):
     if lobby is not None:
         lobby.remove_player(sender_id)
         leave_room(lobby.get_id())
-        emit('message', f'Successfully left the lobby.')
+        emit('message', "Successfully left the lobby.")
         emit('message', f'Player [{sender_id}] has left the lobby.', room=lobby.get_id())
     else:
-        emit('message', f'You are not in a lobby.')
+        emit('message', "You are not in a lobby.")
+
+
+@socketio.on('start lobby')
+def start_lobby(data):
+    sender_id = session['id']
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is not None:
+        if lobby.is_owner(sender_id):
+            success = lobby.start_game()
+            leave_room(lobby.get_id())
+            emit('message', "Game is starting.", room=lobby.get_id())
+        else:
+            emit('message', "Only the owner can start the game.")
+    else:
+        emit('message', "You are not in a lobby.")
 
 
 if __name__ == "__main__":

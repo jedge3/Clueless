@@ -27,7 +27,6 @@ class Lobby():
         return None
 
 
-
     def __init__(self, owner_id):
         self.owner_id = owner_id
         self.player_ids = [owner_id]
@@ -65,9 +64,14 @@ class Lobby():
     def is_owner(self, player_id):
         return self.owner_id == player_id
 
+
     def get_id(self):
         return self.lobby_id
     
 
     def get_players(self):
         return self.player_ids
+    
+    
+    def get_board(self):
+        return self.board

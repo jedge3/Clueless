@@ -36,7 +36,6 @@ class Board():
         global CHARACTER_NAMES
         global START_HALLWAYS
 
-        self.id = lobby.get_id()
         self.player_list = lobby.get_players()
         self.turn = 0 # this will index player_list
         self.murder_room = random.choice(ROOM_NAMES)

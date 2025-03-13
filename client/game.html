@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clue-less - Lobby</title>
+    <title>Clue-less - Game</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="button-container">
         <div id="chat"></div>
-        <button onclick="createLobby()">Create Lobby</button>
         <input type="text" id="message" placeholder="Lobby id here...">
-        <button onclick="joinLobby()">Join Lobby</button>
-        <button onclick="leaveLobby()">Leave Lobby</button>
-        <button onclick="startLobby()">Start Game</button>
+        <button onclick="move()">Move</button>
+        <button onclick="suggest()">Suggest</button>
+        <button onclick="accuse()">Accuse</button>
     </div>
     <script src="main.js"></script>
 </body>

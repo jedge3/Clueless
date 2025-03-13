@@ -8,6 +8,10 @@ app.config['SECRET_KEY'] = "themagnificent6_clueless"
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 
+def short(id):
+    return id[0:8]
+
+
 @app.route('/../client')
 def index():
     return render_template("index.html")
@@ -15,22 +19,43 @@ def index():
 
 @socketio.on('connect')
 def handle_connect():
+    print("connection recieved")
+    emit('getId')
+
+
+@socketio.on('newId')
+def new_id():
+    print("setting new id")
     session['id'] = str(uuid.uuid4())
+    emit('setId', session['id'])
+
+
+@socketio.on('setId')
+def set_id(id):
+    print("setting id to " + id)
+    session['id'] = id
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    sender_id = session['id']
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None:
         lobby.remove_player(sender_id)
         leave_room(lobby.get_id())
-        emit('message', f'Player [{sender_id}] has disconnected.', room=lobby.get_id())
+        emit('message', f'Player [{short(sender_id)}] has disconnected.', room=lobby.get_id())
 
 
 @socketio.on('create lobby')
 def create_lobby(data):
-    sender_id = session['id']
+    sender_id = session.get('id')
+    print(sender_id)
+    if sender_id is None:
+        return
+    
     if Lobby.get_lobby_from_player(sender_id) is not None:
         emit('message', "Already in a lobby.")
         return
@@ -42,7 +67,10 @@ def create_lobby(data):
 
 @socketio.on('join lobby')
 def join_lobby(data):
-    sender_id = session['id']
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    
     if Lobby.get_lobby_from_player(sender_id) is not None:
         emit('message', "Already in a lobby.")
         return
@@ -59,37 +87,81 @@ def join_lobby(data):
         if success:
             emit('message', "Successfully joined the lobby.")
             join_room(lobby_id)
-            emit('message', f'Player [{str(sender_id)}] has joined the lobby.', room=lobby_id)
+            emit('message', f'Player [{short(sender_id)}] has joined the lobby.', room=lobby_id)
         else:
             emit('message', "Unable to join the lobby.")
 
 
 @socketio.on('leave lobby')
 def leave_lobby(data):
-    sender_id = session['id']
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None:
         lobby.remove_player(sender_id)
         leave_room(lobby.get_id())
         emit('message', "Successfully left the lobby.")
-        emit('message', f'Player [{sender_id}] has left the lobby.', room=lobby.get_id())
+        emit('message', f'Player [{short(sender_id)}] has left the lobby.', room=lobby.get_id())
     else:
         emit('message', "You are not in a lobby.")
 
 
 @socketio.on('start lobby')
 def start_lobby(data):
-    sender_id = session['id']
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None:
         if lobby.is_owner(sender_id):
             success = lobby.start_game()
             leave_room(lobby.get_id())
-            emit('message', "Game is starting.", room=lobby.get_id())
+            emit('message', "Starting game...", room=lobby.get_id())
+            emit('start_game', {}, room=lobby.get_id())
         else:
             emit('message', "Only the owner can start the game.")
     else:
         emit('message', "You are not in a lobby.")
+
+
+# Unfinished game controls
+@socketio.on('move')
+def move(data):
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    
+    print(sender_id)
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is not None and lobby.get_board() is not None:
+        print(2)
+        socketio.emit('message', "Test")
+        pass
+
+
+@socketio.on('suggest')
+def suggest(data):
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is not None and lobby.get_board() is not None:
+        pass
+
+
+@socketio.on('accuse')
+def accuse(data):
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is not None and lobby.get_board() is not None:
+        pass
 
 
 if __name__ == "__main__":

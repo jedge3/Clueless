@@ -118,9 +118,11 @@ def start_lobby(data):
     if lobby is not None:
         if lobby.is_owner(sender_id):
             success = lobby.start_game()
-            leave_room(lobby.get_id())
-            emit('message', "Starting game...", room=lobby.get_id())
-            emit('start_game', {}, room=lobby.get_id())
+            if success:
+                emit('message', "Starting game...", room=lobby.get_id())
+                emit('start_game', {}, room=lobby.get_id())
+            else:
+                emit('message', "Not enough players to start.")
         else:
             emit('message', "Only the owner can start the game.")
     else:

@@ -19,20 +19,17 @@ def index():
 
 @socketio.on('connect')
 def handle_connect():
-    print("connection recieved")
     emit('getId')
 
 
 @socketio.on('newId')
 def new_id():
-    print("setting new id")
     session['id'] = str(uuid.uuid4())
     emit('setId', session['id'])
 
 
 @socketio.on('setId')
 def set_id(id):
-    print("setting id to " + id)
     session['id'] = id
 
 
@@ -51,8 +48,8 @@ def handle_disconnect():
 
 @socketio.on('create lobby')
 def create_lobby(data):
+    print("Lobby creation request recieved.")
     sender_id = session.get('id')
-    print(sender_id)
     if sender_id is None:
         return
     
@@ -67,6 +64,7 @@ def create_lobby(data):
 
 @socketio.on('join lobby')
 def join_lobby(data):
+    print("Lobby join request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -94,6 +92,7 @@ def join_lobby(data):
 
 @socketio.on('leave lobby')
 def leave_lobby(data):
+    print("Lobby leave request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -110,6 +109,7 @@ def leave_lobby(data):
 
 @socketio.on('start lobby')
 def start_lobby(data):
+    print("Lobby start request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -132,11 +132,11 @@ def start_lobby(data):
 # Unfinished game controls
 @socketio.on('move')
 def move(data):
+    print("Game move request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
     
-    print(sender_id)
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None and lobby.get_board() is not None:
         print(2)
@@ -146,6 +146,7 @@ def move(data):
 
 @socketio.on('suggest')
 def suggest(data):
+    print("Game suggestion request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -157,6 +158,7 @@ def suggest(data):
 
 @socketio.on('accuse')
 def accuse(data):
+    print("Game accusation request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return

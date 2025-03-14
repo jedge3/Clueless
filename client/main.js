@@ -86,16 +86,16 @@ function accuse() {
 
 // For my testing
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+// function sleep(ms) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
+// }
 
-async function test() {
-    while (true) {
-        const id = getCookie('socketId');
-        console.log(id);
-        await sleep(2000);
-    }
-}
+// async function test() {
+//     while (true) {
+//         const id = getCookie('socketId');
+//         console.log(id);
+//         await sleep(2000);
+//     }
+// }
 
-test();
+// test();

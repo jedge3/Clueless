@@ -90,4 +90,3 @@ class Board():
 
     def accuse():
         pass
-

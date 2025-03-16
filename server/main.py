@@ -35,7 +35,7 @@ def set_id(id):
 
 @socketio.on('create lobby')
 def create_lobby(data):
-    print("Lobby creation request recieved.")
+    print("[Server Networking Subsystem] Lobby creation request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -51,7 +51,7 @@ def create_lobby(data):
 
 @socketio.on('join lobby')
 def join_lobby(data):
-    print("Lobby join request recieved.")
+    print("[Server Networking Subsystem] Lobby join request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -79,7 +79,7 @@ def join_lobby(data):
 
 @socketio.on('leave lobby')
 def leave_lobby(data):
-    print("Lobby leave request recieved.")
+    print("[Server Networking Subsystem] Lobby leave request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -96,7 +96,7 @@ def leave_lobby(data):
 
 @socketio.on('start lobby')
 def start_lobby(data):
-    print("Lobby start request recieved.")
+    print("[Server Networking Subsystem] Lobby start request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -119,7 +119,7 @@ def start_lobby(data):
 # Unfinished game controls
 @socketio.on('move')
 def move(data):
-    print("Game move request recieved.")
+    print("[Server Networking Subsystem] Game move request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -130,7 +130,7 @@ def move(data):
 
 @socketio.on('suggest')
 def suggest(data):
-    print("Game suggestion request recieved.")
+    print("[Server Networking Subsystem] Game suggestion request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -142,7 +142,7 @@ def suggest(data):
 
 @socketio.on('accuse')
 def accuse(data):
-    print("Game accusation request recieved.")
+    print("[Server Networking Subsystem] Game accusation request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return

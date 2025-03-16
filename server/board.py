@@ -31,6 +31,7 @@ class Hallway():
 
 class Board():
     def __init__(self, lobby):
+        print("[Game Logic Subsystem]: Board created and state initialized.")
         global ROOM_NAMES
         global WEAPON_NAMES
         global CHARACTER_NAMES
@@ -81,12 +82,15 @@ class Board():
 
 
     def move():
+        print("[Game Logic Subsystem]: Recieved board move request. Updating board state.")
         pass
 
 
     def suggest():
+        print("[Game Logic Subsystem]: Recieved suggestion request. Each player will decide which card to show the suggester, if they have one of the cards.")
         pass
 
 
     def accuse():
+        print("[Game Logic Subsystem]: Recieved accusation request. If the accusation is correct, the game is over.")
         pass

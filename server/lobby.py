@@ -28,6 +28,7 @@ class Lobby():
 
 
     def __init__(self, owner_id):
+        print("[Game Logic Subsystem]: Lobby created.")
         self.owner_id = owner_id
         self.player_ids = [owner_id]
         Lobby.instances.append(self)
@@ -38,6 +39,7 @@ class Lobby():
 
 
     def add_player(self, player_id):
+        print("[Game Logic Subsystem]: Added player to lobby.")
         if len(self.player_ids) < 6 or self.Board is not None:
             self.player_ids.append(player_id)
             return True
@@ -46,6 +48,7 @@ class Lobby():
 
 
     def remove_player(self, player_id):
+        print("[Game Logic Subsystem]: Removed player from lobby.")
         if player_id in self.player_ids:
             self.player_ids.remove(player_id)
             if len(self.player_ids) > 0:

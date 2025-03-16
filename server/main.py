@@ -33,19 +33,6 @@ def set_id(id):
     session['id'] = id
 
 
-@socketio.on('disconnect')
-def handle_disconnect():
-    sender_id = session.get('id')
-    if sender_id is None:
-        return
-    
-    lobby = Lobby.get_lobby_from_player(sender_id)
-    if lobby is not None:
-        lobby.remove_player(sender_id)
-        leave_room(lobby.get_id())
-        emit('message', f'Player [{short(sender_id)}] has disconnected.', room=lobby.get_id())
-
-
 @socketio.on('create lobby')
 def create_lobby(data):
     print("Lobby creation request recieved.")
@@ -83,9 +70,9 @@ def join_lobby(data):
             return
         success = lobby.add_player(sender_id)
         if success:
-            emit('message', "Successfully joined the lobby.")
-            join_room(lobby_id)
             emit('message', f'Player [{short(sender_id)}] has joined the lobby.', room=lobby_id)
+            join_room(lobby_id)
+            emit('message', "Successfully joined the lobby.")
         else:
             emit('message', "Unable to join the lobby.")
 
@@ -136,12 +123,9 @@ def move(data):
     sender_id = session.get('id')
     if sender_id is None:
         return
-    
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None and lobby.get_board() is not None:
-        print(2)
-        socketio.emit('message', "Test")
-        pass
+        socketio.emit('message', f'Player [{short(sender_id)}] has moved {data['info']}.', room=lobby.get_id())
 
 
 @socketio.on('suggest')
@@ -153,7 +137,7 @@ def suggest(data):
     
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None and lobby.get_board() is not None:
-        pass
+        socketio.emit('message', f'Player [{short(sender_id)}] suggests {data['info']}.', room=lobby.get_id())
 
 
 @socketio.on('accuse')
@@ -165,7 +149,7 @@ def accuse(data):
     
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None and lobby.get_board() is not None:
-        pass
+        socketio.emit('message', f'Player [{short(sender_id)}] accuses {data['info']}.', room=lobby.get_id())
 
 
 if __name__ == "__main__":

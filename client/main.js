@@ -72,15 +72,21 @@ function startLobby() {
 }
 
 function move() {
-    socket.emit('move', {})
+    const input = document.getElementById('message');
+    socket.emit('move', {info:input.value})
+    input.value = '';
 }
 
 function suggest() {
-    socket.emit('suggest', {})
+    const input = document.getElementById('message');
+    socket.emit('suggest', {info:input.value})
+    input.value = '';
 }
 
 function accuse() {
-    socket.emit('accuse', {})
+    const input = document.getElementById('message');
+    socket.emit('accuse', {info:input.value})
+    input.value = '';
 }
 
 

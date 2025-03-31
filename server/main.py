@@ -126,6 +126,8 @@ def move(data):
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None and lobby.get_board() is not None:
         socketio.emit('message', f'Player [{short(sender_id)}] has moved {data['info']}.', room=lobby.get_id())
+    else:
+        socketio.emit('message', "You are not currently in a game.")
 
 
 @socketio.on('suggest')
@@ -138,6 +140,8 @@ def suggest(data):
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None and lobby.get_board() is not None:
         socketio.emit('message', f'Player [{short(sender_id)}] suggests {data['info']}.', room=lobby.get_id())
+    else:
+        socketio.emit('message', "You are not currently in a game.")
 
 
 @socketio.on('accuse')
@@ -150,6 +154,8 @@ def accuse(data):
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None and lobby.get_board() is not None:
         socketio.emit('message', f'Player [{short(sender_id)}] accuses {data['info']}.', room=lobby.get_id())
+    else:
+        socketio.emit('message', "You are not currently in a game.")
 
 
 if __name__ == "__main__":

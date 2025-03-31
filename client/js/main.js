@@ -48,6 +48,9 @@ socket.on('message', function(msg) {
     chat.scrollTop = chat.scrollHeight;
 });
 
+// data['number_players']
+// data['character_index']: index of the player's character
+// data['cards']: list of the cards we have
 socket.on('start_game', function(data) {
     console.log("Moving to game.")
     window.location.href = 'game.html';

@@ -4,4 +4,6 @@ Characters do not start in the hallways. They start in additional rooms next to 
 
 It might be useful to change the cards from strings into classes.
 
-It might be useful to add a a flag to the hallway class for when it is occupied by a character.
+We may want an end turn button.
+
+We will need a new socketio emit signal for deciding which card to show a suggester on their suggestion.

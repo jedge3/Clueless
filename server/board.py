@@ -24,6 +24,7 @@ class Room():
 class Hallway():
     def __init__(self, room1, room2):
         self.rooms = (room1, room2)
+        self.occupied = False
         room1.hallways.append(self)
         room2.hallways.append(self)
 
@@ -81,16 +82,19 @@ class Board():
                 self.characters[player_id].cards.append(card)
 
 
-    def move():
+    def move(data):
         print("[Game Logic Subsystem]: Recieved board move request. Updating board state.")
+        # check to see if the player can move to the position (position should be derived from data['position'] or data['direction'] depending on how we choose to implement it)
+        # move the character object's position
+        # 
         pass
 
 
-    def suggest():
+    def suggest(data):
         print("[Game Logic Subsystem]: Recieved suggestion request. Each player will decide which card to show the suggester, if they have one of the cards.")
         pass
 
 
-    def accuse():
+    def accuse(data):
         print("[Game Logic Subsystem]: Recieved accusation request. If the accusation is correct, the game is over.")
         pass

@@ -17,7 +17,7 @@ class Room():
     def __init__(self, name):
         self.name = name
         self.hallways = []
-        self.secret_pathway = None # holds the room you will move to from the secret hallway
+        self.passageway = None # holds the room you will move to from the secret hallway
 
 
 
@@ -47,10 +47,10 @@ class Board():
         self.rooms = {}
         for room in ROOM_NAMES:
             self.rooms[room] = Room(room)
-        self.rooms["Study"].secret_pathway = self.rooms["Kitchen"]
-        self.rooms["Kitchen"].secret_pathway = self.rooms["Study"]
-        self.rooms["Lounge"].secret_pathway = self.rooms["Conservatory"]
-        self.rooms["Conservatory"].secret_pathway = self.rooms["Lounge"]
+        self.rooms["Study"].passageway = self.rooms["Kitchen"]
+        self.rooms["Kitchen"].passageway = self.rooms["Study"]
+        self.rooms["Lounge"].passageway = self.rooms["Conservatory"]
+        self.rooms["Conservatory"].passageway = self.rooms["Lounge"]
 
         self.hallways = [
             Hallway(self.rooms["Study"], self.rooms["Hall"]),

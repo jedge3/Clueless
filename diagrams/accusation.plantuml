@@ -1,0 +1,19 @@
+@startuml Sequence Diagram
+title Accusation Sequence Diagram
+Player -> Server: Accusation signal
+alt Player in game
+    Server -> Board: Accusation signal
+    alt Accusation is correct
+        par
+            Board --> Player: Game over | You win
+            Board -> "Other Players": Game over | You lose
+        end
+            Board -> Server: End game
+    else Accusation is incorrect
+        Board --> Player: Incorrect accusation | You lose
+        Board -> Character: Remove character
+    end
+else Player not in game
+    Server --> Player: Error
+end
+@enduml

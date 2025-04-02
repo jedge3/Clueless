@@ -10,6 +10,7 @@ alt Player in game
         Character --> Board: Suggestion invalid
     end
     alt Suggestion valid
+        Board -> Character: Move character to room
         loop For every other player
             Board -> Character: Check Other Player has clue
             alt Other Player has clue

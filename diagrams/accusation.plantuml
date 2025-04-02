@@ -10,8 +10,10 @@ alt Player in game
         end
             Board -> Server: End game
     else Accusation is incorrect
-        Board --> Player: Incorrect accusation | You lose
-        Board -> Character: Remove character
+        par
+            Board --> Player: Incorrect accusation | You lose
+            Board --> Server: Remove player from lobby
+        end
     end
 else Player not in game
     Server --> Player: Error

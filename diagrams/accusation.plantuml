@@ -12,7 +12,7 @@ alt Player in game
     else Accusation is incorrect
         par
             Board --> Player: Incorrect accusation | You lose
-            Board --> Server: Remove player from lobby
+            Board --> Character: Character eliminated
         end
     end
 else Player not in game

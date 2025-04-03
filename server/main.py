@@ -124,8 +124,16 @@ def move(data):
     if sender_id is None:
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
-    if lobby is not None and lobby.get_board() is not None:
-        socketio.emit('message', f'Player [{short(sender_id)}] has moved {data['info']}.', room=lobby.get_id())
+    if lobby is None:
+        socketio.emit('message', "You are not currently in a lobby.")
+    else:
+        board = lobby.get_board()
+        if board is not None:
+            board.move(data)
+            # replicate
+        else:
+            socketio.emit('message', "You are not currently in a game.")
+        
 
 
 @socketio.on('suggest')
@@ -134,10 +142,16 @@ def suggest(data):
     sender_id = session.get('id')
     if sender_id is None:
         return
-    
     lobby = Lobby.get_lobby_from_player(sender_id)
-    if lobby is not None and lobby.get_board() is not None:
-        socketio.emit('message', f'Player [{short(sender_id)}] suggests {data['info']}.', room=lobby.get_id())
+    if lobby is None:
+        socketio.emit('message', "You are not currently in a lobby.")
+    else:
+        board = lobby.get_board()
+        if board is not None:
+            board.suggest(data)
+            # replicate
+        else:
+            socketio.emit('message', "You are not currently in a game.")
 
 
 @socketio.on('accuse')
@@ -146,10 +160,16 @@ def accuse(data):
     sender_id = session.get('id')
     if sender_id is None:
         return
-    
     lobby = Lobby.get_lobby_from_player(sender_id)
-    if lobby is not None and lobby.get_board() is not None:
-        socketio.emit('message', f'Player [{short(sender_id)}] accuses {data['info']}.', room=lobby.get_id())
+    if lobby is None:
+        socketio.emit('message', "You are not currently in a lobby.")
+    else:
+        board = lobby.get_board()
+        if board is not None:
+            board.accuse(data)
+            # replicate
+        else:
+            socketio.emit('message', "You are not currently in a game.")
 
 
 if __name__ == "__main__":

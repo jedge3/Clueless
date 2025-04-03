@@ -6,9 +6,9 @@ CHARACTER_NAMES = ["Col. Mustard", "Miss Scarlet", "Prof. Plum", "Mr. Green", "M
 START_HALLWAYS = [4, 1, 2, 10, 11, 7]
 
 class Character():
-    def __init__(self, name):
+    def __init__(self, name, position):
         self.name = name
-        self.position = None
+        self.position = position
         self.cards = []
 
 
@@ -17,13 +17,14 @@ class Room():
     def __init__(self, name):
         self.name = name
         self.hallways = []
-        self.secret_pathway = None # holds the room you will move to from the secret hallway
+        self.passageway = None # holds the room you will move to from the secret hallway
 
 
 
 class Hallway():
     def __init__(self, room1, room2):
         self.rooms = (room1, room2)
+        self.occupied = False
         room1.hallways.append(self)
         room2.hallways.append(self)
 
@@ -46,10 +47,10 @@ class Board():
         self.rooms = {}
         for room in ROOM_NAMES:
             self.rooms[room] = Room(room)
-        self.rooms["Study"].secret_pathway = self.rooms["Kitchen"]
-        self.rooms["Kitchen"].secret_pathway = self.rooms["Study"]
-        self.rooms["Lounge"].secret_pathway = self.rooms["Conservatory"]
-        self.rooms["Conservatory"].secret_pathway = self.rooms["Lounge"]
+        self.rooms["Study"].passageway = self.rooms["Kitchen"]
+        self.rooms["Kitchen"].passageway = self.rooms["Study"]
+        self.rooms["Lounge"].passageway = self.rooms["Conservatory"]
+        self.rooms["Conservatory"].passageway = self.rooms["Lounge"]
 
         self.hallways = [
             Hallway(self.rooms["Study"], self.rooms["Hall"]),
@@ -72,8 +73,7 @@ class Board():
         deck.remove(self.murder_weapon)
         deck.remove(self.murder_character)
         for i, player_id in enumerate(self.player_list):
-            self.characters[player_id] = Character(CHARACTER_NAMES[i])
-            self.characters[player_id].position = self.hallways[START_HALLWAYS[i]]
+            self.characters[player_id] = Character(CHARACTER_NAMES[i], self.hallways[START_HALLWAYS[i]])
 
             for i in range(3):
                 card = random.choice(deck)
@@ -81,16 +81,34 @@ class Board():
                 self.characters[player_id].cards.append(card)
 
 
-    def move():
+    def move(data):
         print("[Game Logic Subsystem]: Recieved board move request. Updating board state.")
+        # data will contain data['position'] or data['direction'] depending on how we choose to implement it
+        # check to see if the player can move to the position derived from the data
+        # move the character object's position
+        # update the hallway occupied tag
+        # return true if successful | false otherwise
         pass
 
 
-    def suggest():
+    def suggest(data):
         print("[Game Logic Subsystem]: Recieved suggestion request. Each player will decide which card to show the suggester, if they have one of the cards.")
+        # data will contain strings data['weapon'] and data['character']. Check to make sure they are strings.
+        # check to see if the suggestion is valid (suggestions should contain a character and weapon. The room will be whichever one the character occupies, so check to see 
+        #   if the character is in a room and not a hallway)
+        # go through the list of players and check if they have one of the cards in the suggestion
+        # if they do, they will be given a choice of which card to show
+        # return true if successful | false otherwise
+        # note: this one might be hard to implement, so I'll probably handle this one.
         pass
 
 
-    def accuse():
+    def accuse(data):
         print("[Game Logic Subsystem]: Recieved accusation request. If the accusation is correct, the game is over.")
+        # data will contain strings data['room'], data['weapon'], and data['character']. Check to make sure they are strings.
+        # check if the accusation if valid (accusations must have a character, weapon, and room)
+        # check to see if the accusation matches the murder held in the game state
+        # if it does, the game is over and the accuser wins.
+        # otherwise, the accuser loses and is eliminated from the game (character removed from Board.characters dictionary).
+        # return true if successful | false otherwise
         pass

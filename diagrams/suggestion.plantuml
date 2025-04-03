@@ -1,0 +1,34 @@
+@startuml Sequence Diagram
+title Suggestion Sequence Diagram
+Player -> Server: Suggestion signal
+alt Player in game
+    Server -> Board: Suggestion signal
+    Board -> Character: Check in room
+    alt Character in room
+        Character --> Board: Suggestion valid
+    else Characer in hallway
+        Character --> Board: Suggestion invalid
+    end
+    alt Suggestion valid
+        Board -> Character: Move character to room
+        loop For every other player
+            Board -> Character: Check Other Player has clue
+            alt Other Player has clue
+                Character --> Board: Player can reveal clue
+            else Other Player doesn't have clue
+                Character --> Board: Player can't reveal clue
+                Board -> Player: Other Player can't reveal clue
+            end
+            opt Player can reveal clue
+                Board -> "Other Player": Choose clue signal
+                "Other Player" --> Board: Reveal clue of choice
+                Board -> Player: Reveal clue
+            end
+        end
+    else Suggestion invalid
+        Board --> Player: Error
+    end
+else Player not in game
+    Server --> Player: Error
+end
+@enduml

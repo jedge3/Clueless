@@ -1,0 +1,28 @@
+@startuml Sequence Diagram
+title Move Sequence Diagram
+Player -> Server: Move signal
+alt Player in game
+    Server -> Board: Move signal
+    opt Move to hallway
+        Board -> Hallway: Check occupied
+        alt Hallway unoccupied
+            Hallway --> Board: Move valid
+        else Hallway occupied
+            Hallway --> Board: Move invalid
+        end
+    end
+    alt Move valid
+        Board -> Character: Move character
+
+        Board --> Server: Move successful
+        par 
+            Server -> Player: Replicate board state
+            Server -> "Other Players": Replicate board state
+        end
+    else Move invalid
+        Board --> Player: Error
+    end
+else Player not in game
+    Server --> Player: Error
+end
+@enduml

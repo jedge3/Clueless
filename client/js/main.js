@@ -1,6 +1,6 @@
 const socket = io("http://localhost:5000")
 var boardObject = null
-import { Board } from "./board.js";
+import { Board, CHARACTER_NAMES} from "./board.js";
 
 console.log("Started client!")
 
@@ -34,6 +34,16 @@ function startConnection() {
     }
 }
 
+function sendChatMessage(msg) {
+    console.log(msg);
+    const chat = document.getElementById('chat');
+    const message = document.createElement('div');
+    message.textContent = msg;
+    message.style.marginBottom = "6px";
+    chat.appendChild(message);
+    chat.scrollTop = chat.scrollHeight;
+}
+
 socket.on('connect', startConnection)
 socket.on('getId', startConnection);
 
@@ -42,73 +52,107 @@ socket.on('setId', function(id) {
 });
 
 socket.on('message', function(msg) {
-    console.log(msg)
-    const chat = document.getElementById('chat');
-    const message = document.createElement('div');
-    message.textContent = msg;
-    message.style.marginBottom = "6px";
-    chat.appendChild(message);
-    chat.scrollTop = chat.scrollHeight;
+    sendChatMessage(msg);
 });
 
-// data['number_players']
 // data['character_index']: index of the player's character
 // data['cards']: list of the cards we have
 socket.on('start_game', function(data) {
-    console.log("Moving to game.")
+    console.log("Moving to game.");
     window.location.href = 'game.html';
-    boardObject = new Board(data['number_players'], data['character_index'], data['cards'])
+    boardObject = new Board(data['character_index'], data['cards'])
 
-    console.log(boardObject.numberPlayers)
+    document.getElementById("clue1").value = data['cards'][0]
+    document.getElementById("clue2").value = data['cards'][1]
+    document.getElementById("clue3").value = data['cards'][2]
+    
+    console.log(boardObject.numberPlayers) // Test
+});
+
+// data['isRoom']: 6 element boolean list, true if the character at the index is in a room | false if in a hallway.
+// next 3, elements will be "" where otherwise inapplicable
+// data['roomName']: 6 element string list, name of the room the character is in
+// data['room1Name']: 6 element string list, name of the room1 of the hallway the character is in
+// data['room2Name']: 6 element string list, name of the room2 of the hallway the character is in
+socket.on('replicate', function(data) {
+    console.log("Recieve replicate signal.");
+
+    // Update character positions
+    for (let i = 0; i < 6; i++) {
+        let new_position;
+        if (data['isRoom'][i]) {
+            new_position = boardObject.rooms[data['roomName'][i]];
+            if (boardObject.characters[i].position != new_position) {
+                sendChatMessage(CHARACTER_NAMES[i] + " moved to " + new_position.name + ".");
+                boardObject.characters[i].position = new_position;
+            }
+        } else {
+            new_position = boardObject.getHallwayFromRoomNames(data['room1Name'][i], data['room2Name'][i]);
+            if (boardObject.characters[i].position != new_position) {
+                sendChatMessage(CHARACTER_NAMES[i] + " moved to the hallway between " + data['room1Name'][i] + " and " + data['room2Name'][i] + ".");
+                boardObject.characters[i].position = new_position;
+            }
+        }
+    }
+
+    // Update UI (target increment)
 });
 
 function createLobby() {
-    socket.emit('create lobby', {})
+    socket.emit('create lobby', {});
 }
 
 function joinLobby() {
     const input = document.getElementById('message');
-    socket.emit('join lobby', {id:input.value})
+    socket.emit('join lobby', {id:input.value});
     input.value = '';
 }
 
 function leaveLobby() {
-    socket.emit('leave lobby', {})
+    socket.emit('leave lobby', {});
 }
 
 function startLobby() {
-    socket.emit('start lobby', {})
+    socket.emit('start lobby', {});
 }
 
+document.querySelector("#moveButton").addEventListener("click", move);
 function move() {
     const input = document.getElementById('message');
     socket.emit('move', {info:input.value});
     input.value = '';
 }
 
+document.querySelector("#suggestButton").addEventListener("click", suggest);
 function suggest() {
     const characterSelection = document.getElementById('selectCharacter');
     const weaponSelection = document.getElementById('selectWeapon');
     
     socket.emit('suggest', {
-        weapon:weaponSelection.value, 
+        weapon:weaponSelection.value,
         character:characterSelection.value
     });
 }
 
+document.querySelector("#accuseButton").addEventListener("click", accuse);
 function accuse() {
     const characterSelection = document.getElementById('selectCharacter');
     const weaponSelection = document.getElementById('selectWeapon');
     const roomSelection = document.getElementById('selectRoom');
-    
+
     socket.emit('accuse', {
         weapon:weaponSelection.value, 
         character:characterSelection.value,
         room:roomSelection.value
     });
-    input.value = '';
 }
 
+document.querySelector("#revealButton").addEventListener("click", reveal);
+function reveal() {
+    const cardName = document.getElementById('selectClue');
+    socket.emit('reveal', {cardName:cardName.value});
+    console.log(cardName.value);
+}
 
 // For testing
 

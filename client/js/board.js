@@ -3,7 +3,7 @@ const WEAPON_NAMES = ["Rope", "Lead Pipe", "Knife", "Wrench", "Candlestick", "Re
 const CHARACTER_NAMES = ["Col. Mustard", "Miss Scarlet", "Prof. Plum", "Mr. Green", "Mrs. White", "Mrs. Peacock"];
 const START_HALLWAYS = [4, 1, 2, 10, 11, 7];
 
-class Character {
+export class Character {
     constructor(name, position) {
         this.name = name;
         this.position = position;
@@ -11,7 +11,7 @@ class Character {
 }
 
 
-class Room {
+export class Room {
     constructor(name) {
         this.name = name;
         this.hallways = [];
@@ -20,7 +20,7 @@ class Room {
 }
 
 
-class Hallway {
+export class Hallway {
     constructor(room1, room2) {
         this.rooms = [room1, room2];
         room2.hallways.push(this);
@@ -29,7 +29,7 @@ class Hallway {
 }
 
 
-class Board {
+export class Board {
     constructor(numberPlayers, characterIndex, knownCards) {
         this.numberPlayers = numberPlayers;
         this.characterIndex = characterIndex;

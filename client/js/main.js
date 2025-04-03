@@ -1,4 +1,7 @@
 const socket = io("http://localhost:5000")
+var boardObject = null
+import { Board } from "./board.js";
+
 console.log("Started client!")
 
 function setCookie(name, value, days) {
@@ -54,6 +57,9 @@ socket.on('message', function(msg) {
 socket.on('start_game', function(data) {
     console.log("Moving to game.")
     window.location.href = 'game.html';
+    boardObject = new Board(data['number_players'], data['character_index'], data['cards'])
+
+    console.log(boardObject.numberPlayers)
 });
 
 function createLobby() {
@@ -76,24 +82,35 @@ function startLobby() {
 
 function move() {
     const input = document.getElementById('message');
-    socket.emit('move', {info:input.value})
+    socket.emit('move', {info:input.value});
     input.value = '';
 }
 
 function suggest() {
-    const input = document.getElementById('message');
-    socket.emit('suggest', {info:input.value})
-    input.value = '';
+    const characterSelection = document.getElementById('selectCharacter');
+    const weaponSelection = document.getElementById('selectWeapon');
+    
+    socket.emit('suggest', {
+        weapon:weaponSelection.value, 
+        character:characterSelection.value
+    });
 }
 
 function accuse() {
-    const input = document.getElementById('message');
-    socket.emit('accuse', {info:input.value})
+    const characterSelection = document.getElementById('selectCharacter');
+    const weaponSelection = document.getElementById('selectWeapon');
+    const roomSelection = document.getElementById('selectRoom');
+    
+    socket.emit('accuse', {
+        weapon:weaponSelection.value, 
+        character:characterSelection.value,
+        room:roomSelection.value
+    });
     input.value = '';
 }
 
 
-// For my testing
+// For testing
 
 // function sleep(ms) {
 //     return new Promise(resolve => setTimeout(resolve, ms));

@@ -1,0 +1,22 @@
+@startuml Sequence Diagram
+title Disproof Sequence Diagram
+
+participant Player
+participant Board
+participant "Other Player"
+loop Until valid card recieved
+    Board -> "Other Player": Disproof signal
+    "Other Player" -> Board: Disproof card
+    alt "Other Player" chooses a card
+        opt Card is invalid
+            Board -> "Other Player": Error
+        end
+    else "Other Player" chooses no card
+        opt "Other Player" can show a card
+            Board -> "Other Player": Error
+        end
+    end
+    Board -> Player: Reveal card
+end
+
+@enduml

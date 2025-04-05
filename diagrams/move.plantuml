@@ -1,5 +1,11 @@
 @startuml Sequence Diagram
 title Move Sequence Diagram
+participant Player
+participant Server
+participant Board
+participant Character
+participant Hallway
+participant "Other Players"
 Player -> Server: Move signal
 alt Player in game
     Server -> Board: Move signal

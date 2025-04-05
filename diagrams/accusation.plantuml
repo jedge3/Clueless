@@ -1,5 +1,10 @@
 @startuml Sequence Diagram
 title Accusation Sequence Diagram
+participant Player
+participant Server
+participant Board
+participant Character
+participant "Other Players"
 Player -> Server: Accusation signal
 alt Player in game
     Server -> Board: Accusation signal

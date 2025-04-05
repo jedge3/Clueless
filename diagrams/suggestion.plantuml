@@ -1,5 +1,10 @@
 @startuml Sequence Diagram
 title Suggestion Sequence Diagram
+participant Player
+participant Server
+participant Board
+participant Character
+participant "Other Player"
 Player -> Server: Suggestion signal
 alt Player in game
     Server -> Board: Suggestion signal
@@ -12,18 +17,9 @@ alt Player in game
     alt Suggestion valid
         Board -> Character: Move character to room
         loop For every other player
-            Board -> Character: Check Other Player has clue
-            alt Other Player has clue
-                Character --> Board: Player can reveal clue
-            else Other Player doesn't have clue
-                Character --> Board: Player can't reveal clue
-                Board -> Player: Other Player can't reveal clue
-            end
-            opt Player can reveal clue
-                Board -> "Other Player": Choose clue signal
-                "Other Player" --> Board: Reveal clue of choice
-                Board -> Player: Reveal clue
-            end
+            Board -> "Other Player": Disproof signal
+            "Other Player" -> Board: Disproof card
+            Board --> Player: Reveal card
         end
     else Suggestion invalid
         Board --> Player: Error

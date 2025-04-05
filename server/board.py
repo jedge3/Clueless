@@ -75,10 +75,11 @@ class Board():
         for i, player_id in enumerate(self.player_list):
             self.characters[player_id] = Character(CHARACTER_NAMES[i], self.hallways[START_HALLWAYS[i]])
 
-            for i in range(3):
-                card = random.choice(deck)
-                deck.remove(card)
-                self.characters[player_id].cards.append(card)
+            # Correction: Players may have more or less than 3 cards. All remaining cards are dealt to each player after the murder cards are removed.
+            # for i in range(3):
+            #     card = random.choice(deck)
+            #     deck.remove(card)
+            #     self.characters[player_id].cards.append(card)
 
 
     def move(data):

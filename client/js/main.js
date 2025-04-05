@@ -147,10 +147,10 @@ function accuse() {
     });
 }
 
-document.querySelector("#revealButton").addEventListener("click", reveal);
+document.querySelector("#disproveButton").addEventListener("click", reveal);
 function reveal() {
     const cardName = document.getElementById('selectClue');
-    socket.emit('reveal', {cardName:cardName.value});
+    socket.emit('disprove', {cardName:cardName.value});
     console.log(cardName.value);
 }
 

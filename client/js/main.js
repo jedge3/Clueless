@@ -154,6 +154,11 @@ function reveal() {
     console.log(cardName.value);
 }
 
+document.querySelector("#endTurnButton").addEventListener("click", endTurn);
+function endTurn() {
+    console.log();
+}
+
 // For testing
 
 // function sleep(ms) {

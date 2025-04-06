@@ -113,3 +113,11 @@ class Board():
         # otherwise, the accuser loses and is eliminated from the game (character removed from Board.characters dictionary).
         # return true if successful | false otherwise
         pass
+
+
+    def disprove(data):
+        pass
+
+
+    def end_turn(data):
+        pass

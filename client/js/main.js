@@ -96,9 +96,9 @@ socket.on('replicate', function(data) {
     }
 
     // Update movable positions
-    character = boardObject.getPlayingCharacter();
-    position = character.position;
-    movablePositions = [];
+    let character = boardObject.getPlayingCharacter();
+    let position = character.position;
+    let movablePositions = [];
     if (position instanceof Room) {
         for (let hallway in boardObject.getHallwayAttachedToRoom(position)) {
             if (!hallway.occupied) {
@@ -114,7 +114,7 @@ socket.on('replicate', function(data) {
         console.log("Error: position is not a hallway or room.");
     }
 
-    positionSelection = document.getElementById("selectPosition");
+    const positionSelection = document.getElementById("selectPosition");
     positionSelection.options.length = 0;
     for (let position in movablePositions) {
         let text = "";

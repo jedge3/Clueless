@@ -36,8 +36,12 @@ export class Board {
         this.knownCards = knownCards;
 
         this.rooms = {};
-        for (let room of ROOM_NAMES) {
-            this.rooms[room] = new Room(room);
+        for (let roomName of ROOM_NAMES) {
+            this.rooms[roomName] = new Room(roomName);
+        }
+        for (let characterName in CHARACTER_NAMES) {
+            let roomName = characterName + " Starting Room";
+            this.rooms[roomName] = new Room(roomName);
         }
         this.rooms["Study"].passage = this.rooms["Kitchen"];
         this.rooms["Kitchen"].passage = this.rooms["Study"];
@@ -59,9 +63,15 @@ export class Board {
             new Hallway(this.rooms["Ball Room"], this.rooms["Kitchen"]),
         ];
 
+        for (let i = 0; i < 6; i++) {
+            let hallwayIndex = START_HALLWAYS[i];
+            let roomName = CHARACTER_NAMES[i] + " Starting Room";
+            this.hallways[hallwayIndex].rooms.push(this.rooms[roomName]);
+        }
+
         this.characters = [];
         for (let i = 0; i < 6; i++) {
-            this.characters.push(new Character(CHARACTER_NAMES[i], this.hallways[START_HALLWAYS[i]]));
+            this.characters.push(new Character(CHARACTER_NAMES[i], this.rooms[CHARACTER_NAMES[i] + " Starting Room"]));
         }
     }
 
@@ -89,6 +99,6 @@ export class Board {
                 attached_hallways.push(hallway);
             }
         }
-        return attached_hallways
+        return attached_hallways;
     }
 }

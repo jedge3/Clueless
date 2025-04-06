@@ -16,7 +16,7 @@ alt Player in game
     end
     alt Suggestion valid
         Board -> Character: Move character to room
-        loop For every other player
+        loop Until a card is revealed
             Board -> "Other Player": Disproof signal
             "Other Player" -> Board: Disproof card
             Board --> Player: Reveal card

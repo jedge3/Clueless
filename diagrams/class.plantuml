@@ -1,0 +1,72 @@
+@startuml Class Diagram
+
+title Class Diagram
+
+left to right direction
+
+class Lobby {
+    {static} instances : List [Lobby]
+    {field} owner_id : String
+    {field} player_ids : List [String]
+    {field} lobby_id : String
+    {field} board : Board
+
+    {method} {static} get_instances () : List [Lobby]
+    {method} {static} get_lobby_from_player (String) : Lobby
+    {method} {static} get_lobby_by_id (String) : Lobby
+    {method} add_player (String) : Bool
+    {method} remove_player (String) : Void
+    {method} start_game () : Bool
+    {method} is_owner (String) : Bool
+    {method} get_id () : String
+    {method} get_players () : List [String]
+    {method} get_board () : Board
+}
+
+class Board {
+    {field} player_list : List [String]
+    {field} turn : Int
+    {field} murder_room : Card
+    {field} murder_weapon : Card
+    {field} murder_character : Card
+    {field} rooms : Dictionary {String : Room}
+    {field} hallways : List [Hallway]
+    {field} characters : Dictionary {Int : Character}
+
+    {method} move (data) : Bool
+    {method} suggest (data) : Bool
+    {method} accuse (data) : Bool
+}
+
+class Hallway {
+    {field} rooms : Tuple {Room}
+    {field} occupied : Bool
+}
+
+class Character {
+    {field} name : String
+    {field} inventory : List [Card]
+    {field} position : String
+}
+
+class Room {
+    {field} name : String
+    {field} hallways : List [Hallway]
+    {field} passageway : Room
+}
+
+class Card {
+    name : String
+    type : Int
+}
+
+Lobby::board "1" --o "1" Board
+Board::hallways "1" *-- "12" Hallway : contains
+Board::rooms "1" *-- "9" Room : contains
+Board::characters "1" *-- "6" Character : contains
+Board::murder_room "1" *-- "1" Card : contains
+Board::murder_weapon "1" *-- "1" Card : contains
+Board::murder_character "1" *-- "1" Card : contains
+Character::inventory "1" *-- "*" Card : contains
+
+@enduml

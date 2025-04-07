@@ -15,7 +15,7 @@ export class Room {
     constructor(name) {
         this.name = name;
         this.hallways = [];
-        this.secret_pathway = null;
+        this.passage = null;
     }
 }
 
@@ -36,13 +36,17 @@ export class Board {
         this.knownCards = knownCards;
 
         this.rooms = {};
-        for (let room of ROOM_NAMES) {
-            this.rooms[room] = new Room(room);
+        for (let roomName of ROOM_NAMES) {
+            this.rooms[roomName] = new Room(roomName);
         }
-        this.rooms["Study"].secret_pathway = this.rooms["Kitchen"];
-        this.rooms["Kitchen"].secret_pathway = this.rooms["Study"];
-        this.rooms["Lounge"].secret_pathway = this.rooms["Conservatory"];
-        this.rooms["Conservatory"].secret_pathway = this.rooms["Lounge"];
+        for (let characterName in CHARACTER_NAMES) {
+            let roomName = characterName + " Starting Room";
+            this.rooms[roomName] = new Room(roomName);
+        }
+        this.rooms["Study"].passage = this.rooms["Kitchen"];
+        this.rooms["Kitchen"].passage = this.rooms["Study"];
+        this.rooms["Lounge"].passage = this.rooms["Conservatory"];
+        this.rooms["Conservatory"].passage = this.rooms["Lounge"];
 
         this.hallways = [
             new Hallway(this.rooms["Study"], this.rooms["Hall"]),
@@ -59,10 +63,20 @@ export class Board {
             new Hallway(this.rooms["Ball Room"], this.rooms["Kitchen"]),
         ];
 
+        for (let i = 0; i < 6; i++) {
+            let hallwayIndex = START_HALLWAYS[i];
+            let roomName = CHARACTER_NAMES[i] + " Starting Room";
+            this.hallways[hallwayIndex].rooms.push(this.rooms[roomName]);
+        }
+
         this.characters = [];
         for (let i = 0; i < 6; i++) {
-            this.characters.push(new Character(CHARACTER_NAMES[i], this.hallways[START_HALLWAYS[i]]));
+            this.characters.push(new Character(CHARACTER_NAMES[i], this.rooms[CHARACTER_NAMES[i] + " Starting Room"]));
         }
+    }
+
+    getPlayingCharacter() {
+        return this.characters[this.characterIndex];
     }
 
     getHallwayFromRoomNames(room1Name, room2Name) {
@@ -76,5 +90,15 @@ export class Board {
 
     getHallwayFromRooms(room1, room2) {
         return this.getHallwayFromRoomNames(room1.Name, room2.Name);
+    }
+
+    getHallwaysAttachedToRoom(room) {
+        attached_hallways = []
+        for (let hallway in this.hallways) {
+            if (hallway.rooms.includes(room.Name)) {
+                attached_hallways.push(hallway);
+            }
+        }
+        return attached_hallways;
     }
 }

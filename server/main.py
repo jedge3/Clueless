@@ -171,6 +171,42 @@ def accuse(data):
         else:
             socketio.emit('message', "You are not currently in a game.")
 
+        
+@socketio.on('disprove')
+def accuse(data):
+    print("[Server Networking Subsystem] Game disproof request recieved.")
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is None:
+        socketio.emit('message', "You are not currently in a lobby.")
+    else:
+        board = lobby.get_board()
+        if board is not None:
+            board.disprove(data)
+            # replicate
+        else:
+            socketio.emit('message', "You are not currently in a game.")
+
+
+@socketio.on('end_turn')
+def accuse():
+    print("[Server Networking Subsystem] Game disproof request recieved.")
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is None:
+        socketio.emit('message', "You are not currently in a lobby.")
+    else:
+        board = lobby.get_board()
+        if board is not None:
+            board.end_turn()
+            # replicate
+        else:
+            socketio.emit('message', "You are not currently in a game.")
+
 
 if __name__ == "__main__":
     socketio.run(app)

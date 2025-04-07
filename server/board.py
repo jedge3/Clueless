@@ -30,6 +30,20 @@ class Hallway():
 
 
 
+class Card():
+    def __init__(self, name):
+        self.name = name
+        if name in ROOM_NAMES:
+            self.type = "room"
+        elif name in WEAPON_NAMES:
+            self.type = "weapon"
+        elif name in CHARACTER_NAMES:
+            self.type = "character"
+        else:
+            raise Exception("Invalid card name.")
+
+
+
 class Board():
     def __init__(self, lobby):
         print("[Game Logic Subsystem]: Board created and state initialized.")
@@ -40,10 +54,9 @@ class Board():
 
         self.player_list = lobby.get_players()
         self.turn = 0 # this will index player_list
-        self.murder_room = random.choice(ROOM_NAMES)
-        self.murder_weapon = random.choice(WEAPON_NAMES)
-        self.murder_character = random.choice(CHARACTER_NAMES)
+        self.disprove_turn = 0 # this will index player_list
 
+        # Rooms
         self.rooms = {}
         for room in ROOM_NAMES:
             self.rooms[room] = Room(room)
@@ -52,6 +65,7 @@ class Board():
         self.rooms["Lounge"].passageway = self.rooms["Conservatory"]
         self.rooms["Conservatory"].passageway = self.rooms["Lounge"]
 
+        # Hallways
         self.hallways = [
             Hallway(self.rooms["Study"], self.rooms["Hall"]),
             Hallway(self.rooms["Hall"], self.rooms["Lounge"]),
@@ -67,19 +81,35 @@ class Board():
             Hallway(self.rooms["Ball Room"], self.rooms["Kitchen"]),
         ]
 
+        # Characters
         self.characters = {} # format: [player's id]:[character class]
-        deck = ROOM_NAMES + WEAPON_NAMES + CHARACTER_NAMES
-        deck.remove(self.murder_room)
-        deck.remove(self.murder_weapon)
-        deck.remove(self.murder_character)
         for i, player_id in enumerate(self.player_list):
             self.characters[player_id] = Character(CHARACTER_NAMES[i], self.hallways[START_HALLWAYS[i]])
 
-            # Correction: Players may have more or less than 3 cards. All remaining cards are dealt to each player after the murder cards are removed.
-            # for i in range(3):
-            #     card = random.choice(deck)
-            #     deck.remove(card)
-            #     self.characters[player_id].cards.append(card)
+        # Deck setup
+        card_names = ROOM_NAMES + WEAPON_NAMES + CHARACTER_NAMES
+        deck = []
+
+        for name in card_names:
+            deck.append(Card(name))
+
+        self.murder_room = Card(random.choice(ROOM_NAMES))
+        self.murder_weapon = Card(random.choice(WEAPON_NAMES))
+        self.murder_character = Card(random.choice(CHARACTER_NAMES))
+        deck.remove(self.murder_room)
+        deck.remove(self.murder_weapon)
+        deck.remove(self.murder_character)
+
+        player_index = -1
+        while len(deck) > 0:
+            player_index +=1
+            if player_index == len(self.player_list):
+                player_index = 0
+            character = self.characters[self.player_list[player_index]]
+
+            card_choice = random.choice(deck)
+            character.cards.append(card_choice)
+            deck.remove(card_choice)
 
 
     def move(data):
@@ -110,6 +140,14 @@ class Board():
         # check if the accusation if valid (accusations must have a character, weapon, and room)
         # check to see if the accusation matches the murder held in the game state
         # if it does, the game is over and the accuser wins.
-        # otherwise, the accuser loses and is eliminated from the game (character removed from Board.characters dictionary).
+        # otherwise, the accuser loses and is eliminated from the game (player is added to an eliminated player list).
         # return true if successful | false otherwise
+        pass
+
+
+    def disprove(data):
+        pass
+
+
+    def end_turn(data):
         pass

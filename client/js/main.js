@@ -1,6 +1,6 @@
 const socket = io("http://localhost:5000")
 var boardObject = null
-import { Board, CHARACTER_NAMES} from "./board.js";
+import { Board, CHARACTER_NAMES, Hallway} from "./board.js";
 
 console.log("Started client!")
 
@@ -79,21 +79,59 @@ socket.on('replicate', function(data) {
 
     // Update character positions
     for (let i = 0; i < 6; i++) {
-        let new_position;
+        let newPosition;
         if (data['isRoom'][i]) {
-            new_position = boardObject.rooms[data['roomName'][i]];
-            if (boardObject.characters[i].position != new_position) {
-                sendChatMessage(CHARACTER_NAMES[i] + " moved to " + new_position.name + ".");
-                boardObject.characters[i].position = new_position;
+            newPosition = boardObject.rooms[data['roomName'][i]];
+            if (boardObject.characters[i].position != newPosition) {
+                sendChatMessage(CHARACTER_NAMES[i] + " moved to " + newPosition.name + ".");
+                boardObject.characters[i].position = newPosition;
             }
         } else {
-            new_position = boardObject.getHallwayFromRoomNames(data['room1Name'][i], data['room2Name'][i]);
-            if (boardObject.characters[i].position != new_position) {
+            newPosition = boardObject.getHallwayFromRoomNames(data['room1Name'][i], data['room2Name'][i]);
+            if (boardObject.characters[i].position != newPosition) {
                 sendChatMessage(CHARACTER_NAMES[i] + " moved to the hallway between " + data['room1Name'][i] + " and " + data['room2Name'][i] + ".");
-                boardObject.characters[i].position = new_position;
+                boardObject.characters[i].position = newPosition;
             }
         }
     }
+
+    // Update movable positions
+    let character = boardObject.getPlayingCharacter();
+    let position = character.position;
+    let movablePositions = [];
+    if (position instanceof Room) {
+        for (let hallway in boardObject.getHallwayAttachedToRoom(position)) {
+            if (!hallway.occupied) {
+                movablePositions.push(hallway);
+            }
+        }
+        if (position.passage != null) {
+            movablePositions.push(position.passage);
+        }
+    } else if (position instanceof Hallway) {
+        movablePositions = position.rooms;
+    } else {
+        console.log("Error: position is not a hallway or room.");
+    }
+
+    const positionSelection = document.getElementById("selectPosition");
+    positionSelection.options.length = 0;
+    for (let position in movablePositions) {
+        let text = "";
+        let value = "";
+        if (position instanceof Room) {
+            text = position.name;
+            value = "r," + position.name;
+        } else if (position instanceof Hallway) {
+            text = "Hallway between " + position.rooms[0] + " and " + position.rooms[1];
+            value = "h," + position.rooms[0] + "," + + position.rooms[1];
+        }
+        const newOption = document.createElement("option");
+        newOption.text = text;
+        newOption.value = value;
+        positionSelection.appendChild(newOption);
+    }
+
 
     // Update UI (target increment)
 });
@@ -152,6 +190,11 @@ function reveal() {
     const cardName = document.getElementById('selectClue');
     socket.emit('disprove', {cardName:cardName.value});
     console.log(cardName.value);
+}
+
+document.querySelector("#endTurnButton").addEventListener("click", endTurn);
+function endTurn() {
+    console.log();
 }
 
 // For testing

@@ -154,14 +154,11 @@ function startLobby() {
     socket.emit('start lobby', {});
 }
 
-document.querySelector("#moveButton").addEventListener("click", move);
 function move() {
-    const input = document.getElementById('message');
-    socket.emit('move', {info:input.value});
-    input.value = '';
+    const input = document.getElementById('selectPosition');
+    socket.emit('move', {position:input.value});
 }
 
-document.querySelector("#suggestButton").addEventListener("click", suggest);
 function suggest() {
     const characterSelection = document.getElementById('selectCharacter');
     const weaponSelection = document.getElementById('selectWeapon');
@@ -172,12 +169,11 @@ function suggest() {
     });
 }
 
-document.querySelector("#accuseButton").addEventListener("click", accuse);
 function accuse() {
     const characterSelection = document.getElementById('selectCharacter');
     const weaponSelection = document.getElementById('selectWeapon');
     const roomSelection = document.getElementById('selectRoom');
-
+    
     socket.emit('accuse', {
         weapon:weaponSelection.value, 
         character:characterSelection.value,
@@ -185,18 +181,33 @@ function accuse() {
     });
 }
 
-document.querySelector("#disproveButton").addEventListener("click", reveal);
 function reveal() {
     const cardName = document.getElementById('selectClue');
     socket.emit('disprove', {cardName:cardName.value});
     console.log(cardName.value);
 }
 
-document.querySelector("#endTurnButton").addEventListener("click", endTurn);
 function endTurn() {
     console.log();
 }
 
+
+let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1];  // Path to the HTML file
+
+if (fileName.split(".")[0] == "index") {
+    console.log("Lobby buttons connected.");
+    document.querySelector("#createButton").addEventListener("click", createLobby);
+    document.querySelector("#joinButton").addEventListener("click", joinLobby);
+    document.querySelector("#leaveButton").addEventListener("click", leaveLobby);
+    document.querySelector("#startButton").addEventListener("click", startLobby);
+} else if (fileName.split(".")[0] == "game") {
+    console.log("Game buttons connected.");
+    document.querySelector("#moveButton").addEventListener("click", move);
+    document.querySelector("#suggestButton").addEventListener("click", suggest);
+    document.querySelector("#accuseButton").addEventListener("click", accuse);
+    document.querySelector("#disproveButton").addEventListener("click", reveal);
+    document.querySelector("#endTurnButton").addEventListener("click", endTurn);
+}
 // For testing
 
 // function sleep(ms) {

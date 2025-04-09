@@ -208,6 +208,7 @@ if (fileName.split(".")[0] == "index") {
     document.querySelector("#disproveButton").addEventListener("click", reveal);
     document.querySelector("#endTurnButton").addEventListener("click", endTurn);
 }
+
 // For testing
 
 // function sleep(ms) {

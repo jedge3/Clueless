@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clue-less - Lobby</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="icon" href="assets/images/logo.png" type="image/png">
 </head>
 <body>
     <div class="button-container">
         <div id="chat"></div>
-        <button onclick="createLobby()">Create Lobby</button>
+        <button id="createLobbyButton">Create Lobby</button>
         <input type="text" id="message" placeholder="Lobby id here...">
-        <button onclick="joinLobby()">Join Lobby</button>
-        <button onclick="leaveLobby()">Leave Lobby</button>
-        <button onclick="startLobby()">Start Game</button>
+        <button id="joinLobbyButton">Join Lobby</button>
+        <button id="leaveLobbyButton">Leave Lobby</button>
+        <button id="startLobbyButton">Start Game</button>
     </div>
-    <script src="js/main.js"></script>
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

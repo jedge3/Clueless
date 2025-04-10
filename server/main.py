@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 import uuid
 from lobby import Lobby
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../client', static_folder='../client')
 app.config['SECRET_KEY'] = "themagnificent6_clueless"
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -12,7 +12,7 @@ def short(id):
     return id[0:8]
 
 
-@app.route('/../client')
+@app.route('/')
 def index():
     return render_template("index.html")
 

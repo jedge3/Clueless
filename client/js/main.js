@@ -55,20 +55,6 @@ socket.on('message', function(msg) {
     sendChatMessage(msg);
 });
 
-// data['character_index']: index of the player's character
-// data['cards']: list of the cards we have
-socket.on('start_game', function(data) {
-    console.log("Moving to game.");
-    window.location.href = 'game.html';
-    boardObject = new Board(data['character_index'], data['cards'])
-
-    document.getElementById("clue1").value = data['cards'][0]
-    document.getElementById("clue2").value = data['cards'][1]
-    document.getElementById("clue3").value = data['cards'][2]
-    
-    console.log(boardObject.numberPlayers) // Test
-});
-
 // data['isRoom']: 6 element boolean list, true if the character at the index is in a room | false if in a hallway.
 // next 3, elements will be "" where otherwise inapplicable
 // data['roomName']: 6 element string list, name of the room the character is in
@@ -136,66 +122,123 @@ socket.on('replicate', function(data) {
     // Update UI (target increment)
 });
 
-function createLobby() {
-    socket.emit('create lobby', {});
-}
+document.addEventListener("DOMContentLoaded", () => {
+    const createLobbyButton = document.getElementById("createLobbyButton");
+    const joinLobbyButton = document.getElementById("joinLobbyButton");
+    const leaveLobbyButton = document.getElementById("leaveLobbyButton");
+    const startLobbyButton = document.getElementById("startLobbyButton");
 
-function joinLobby() {
-    const input = document.getElementById('message');
-    socket.emit('join lobby', {id:input.value});
-    input.value = '';
-}
+    createLobbyButton.addEventListener("click", createLobby);
+    joinLobbyButton.addEventListener("click", joinLobby);
+    leaveLobbyButton.addEventListener("click", leaveLobby);
+    startLobbyButton.addEventListener("click", startLobby);
 
-function leaveLobby() {
-    socket.emit('leave lobby', {});
-}
+    // data['character_index']: index of the player's character
+    // data['cards']: list of the cards we have
+    socket.on('start_game', function(data) {
+        console.log("Moving to game.");
+        window.location.href = 'game.html';
+        boardObject = new Board(data['character_index'], data['cards'])
 
-function startLobby() {
-    socket.emit('start lobby', {});
-}
+        document.getElementById("clue1").value = data['cards'][0]
+        document.getElementById("clue2").value = data['cards'][1]
+        document.getElementById("clue3").value = data['cards'][2]
+        
+        console.log(boardObject.numberPlayers) // Test
+    });
 
-document.querySelector("#moveButton").addEventListener("click", move);
-function move() {
-    const input = document.getElementById('message');
-    socket.emit('move', {info:input.value});
-    input.value = '';
-}
-
-document.querySelector("#suggestButton").addEventListener("click", suggest);
-function suggest() {
-    const characterSelection = document.getElementById('selectCharacter');
-    const weaponSelection = document.getElementById('selectWeapon');
+    function createLobby() {
+        socket.emit('create lobby', {});
+    }
     
-    socket.emit('suggest', {
-        weapon:weaponSelection.value,
-        character:characterSelection.value
-    });
-}
+    function joinLobby() {
+        const input = document.getElementById('message');
+        socket.emit('join lobby', {id:input.value});
+        input.value = '';
+    }
+    
+    function leaveLobby() {
+        socket.emit('leave lobby', {});
+    }
+    
+    function startLobby() {
+        socket.emit('start lobby', {});
+    }
+});
 
-document.querySelector("#accuseButton").addEventListener("click", accuse);
-function accuse() {
-    const characterSelection = document.getElementById('selectCharacter');
-    const weaponSelection = document.getElementById('selectWeapon');
-    const roomSelection = document.getElementById('selectRoom');
+document.addEventListener("DOMContentLoaded", function() {
+    if (window.location.pathname.endsWith("game.html")) {
+        const moveButton = document.querySelector("#moveButton");
+        moveButton.addEventListener("click", move);
+    }
 
-    socket.emit('accuse', {
-        weapon:weaponSelection.value, 
-        character:characterSelection.value,
-        room:roomSelection.value
-    });
-}
+    function move() {
+        const input = document.getElementById('message');
+        socket.emit('move', {info:input.value});
+        input.value = '';
+    }
+});
 
-document.querySelector("#disproveButton").addEventListener("click", reveal);
-function reveal() {
-    const cardName = document.getElementById('selectClue');
-    socket.emit('disprove', {cardName:cardName.value});
-    console.log(cardName.value);
-}
+document.addEventListener("DOMContentLoaded", function() {
+    if (window.location.pathname.endsWith("game.html")) {
+        const suggestButton = document.querySelector("#suggestButton");
+        suggestButton.addEventListener("click", suggest);
+    }
 
-document.querySelector("#endTurnButton").addEventListener("click", endTurn);
-function endTurn() {
-    console.log();
-}
+
+    function suggest() {
+        const characterSelection = document.getElementById('selectCharacter');
+        const weaponSelection = document.getElementById('selectWeapon');
+        
+        socket.emit('suggest', {
+            weapon:weaponSelection.value,
+            character:characterSelection.value
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    if (window.location.pathname.endsWith("game.html")) {
+        const accuseButton = document.querySelector("#accuseButton");
+        accuseButton.addEventListener("click", accuse);
+    }
+
+    function accuse() {
+        const characterSelection = document.getElementById('selectCharacter');
+        const weaponSelection = document.getElementById('selectWeapon');
+        const roomSelection = document.getElementById('selectRoom');
+
+        socket.emit('accuse', {
+            weapon:weaponSelection.value, 
+            character:characterSelection.value,
+            room:roomSelection.value
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    if (window.location.pathname.endsWith("game.html")) {
+        const disproveButton = document.querySelector("#disproveButton");
+        disproveButton.addEventListener("click", reveal);
+    }
+
+    function reveal() {
+        const cardName = document.getElementById('selectClue');
+        socket.emit('disprove', {cardName:cardName.value});
+        console.log(cardName.value);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    if (window.location.pathname.endsWith("game.html")) {
+        const endTurnButton = document.querySelector("#endTurnButton");
+        endTurnButton.addEventListener("click", endTurn);
+    }
+
+    function endTurn() {
+        console.log();
+    }
+});
 
 // For testing
 

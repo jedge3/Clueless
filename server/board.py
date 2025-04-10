@@ -155,10 +155,6 @@ class Board():
                 # error
                 return False
         elif pos_split[0] == "h": # Moving to a hallway
-            print("HERE THEY ARE")
-            print(data['position'])
-            print(pos_split[1])
-            print(pos_split[2])
             room1 = self.rooms.get(pos_split[1])
             room2 = self.rooms.get(pos_split[2])
             hallway = self.get_hallway_from_rooms(room1, room2)

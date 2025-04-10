@@ -152,7 +152,7 @@ class Board():
             elif room == character.position.passageway:
                 character.move_to(room)
             else:
-                # error
+                print("An error has occured")
                 return False
         elif pos_split[0] == "h": # Moving to a hallway
             room1 = self.rooms.get(pos_split[1])
@@ -161,10 +161,10 @@ class Board():
             if not hallway.occupied and isinstance(character.position, Room) and character.position in hallway.rooms:
                 character.move_to(hallway)
             else:
-                # error
+                print("An error has occured")
                 return False
         else:
-            #error
+            print("An error has occured")
             return False
 
         return True

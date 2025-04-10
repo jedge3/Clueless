@@ -137,8 +137,12 @@ def move(data):
     else:
         board = lobby.get_board()
         if board is not None:
-            board.move(data)
-            # replicate
+            success = board.move(data)
+            print(success)
+            if success:
+                emit('replicate', board.get_replicate_data(sender_id))
+            else:
+                emit('message', "An error occured with that move.")
         else:
             socketio.emit('message', "You are not currently in a game.")
         

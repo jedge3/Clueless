@@ -54,12 +54,18 @@ class Board():
 
         self.id = lobby.get_id()
         self.player_list = lobby.get_players()
-        self.disprove_turn = 0 # this will index player_list
         self.eliminated = [False] * len(self.player_list)
 
         self.turn = 0 # this will index player_list
         self.moved = False
         self.suggested = False
+
+        self.suggesting = False
+        self.suggested_room = ""
+        self.suggested_weapon = ""
+        self.suggested_character = ""
+        self.disproof_turn = 0
+        self.suggester = None
 
         # Rooms
         self.rooms = {}
@@ -103,6 +109,11 @@ class Board():
         deck.remove(self.murder_weapon)
         deck.remove(self.murder_character)
 
+        print("Murder has taken place.")
+        print(self.murder_room)
+        print(self.murder_character)
+        print(self.murder_weapon)
+
         player_index = -1
         while len(deck) > 0:
             player_index +=1
@@ -130,9 +141,25 @@ class Board():
 
     def is_turn(self, player_id):
         return self.player_list.index(player_id) == self.turn
+    
+
+    def is_disproof_turn(self, player_id):
+        return self.player_list.index(player_id) == self.disproof_turn
+
+
+    def is_able_disprove(self, player_id):
+        character = self.get_character_from_playerid(player_id)
+        for card in character.cards:
+            if card in [self.suggested_room, self.suggested_weapon, self.suggested_character]:
+                return True
+        return False
 
 
     def end_turn(self):
+        if self.suggesting:
+            return False
+        self.moved = False
+        self.suggested = False
         for i in range(len(self.player_list)):
             self.turn += 1
             self.turn = self.turn % len(self.player_list)
@@ -142,6 +169,7 @@ class Board():
             elif i == len(self.player_list):
                 print("Game over. Everyone has lost.")
                 self.end_game()
+        return True
  
 
     def end_game(self):
@@ -151,6 +179,10 @@ class Board():
 
     def move(self, data):
         print("[Game Logic Subsystem]: Recieved board move request. Updating board state.")
+
+        if self.moved:
+            return False
+        
         character = self.get_character_from_playerid(data['player_id'])
         pos_split = str.split(data['position'], ",")
 
@@ -176,6 +208,7 @@ class Board():
             print("An error has occured")
             return False
 
+        self.moved = True
         return True
 
         # data will contain data['position'] or data['direction'] depending on how we choose to implement it
@@ -188,6 +221,22 @@ class Board():
 
     def suggest(self, data):
         print("[Game Logic Subsystem]: Recieved suggestion request. Each player will decide which card to show the suggester, if they have one of the cards.")
+        if self.suggested:
+            return False
+        
+        character = self.get_character_from_playerid(data['player_id'])
+        room = character.position
+        if isinstance(room, Room):
+            if room.name in ROOM_NAMES and data['weapon'] in WEAPON_NAMES and data['character'] in CHARACTER_NAMES:
+                self.suggested = True
+                self.suggested_room = room.name
+                self.suggested_weapon = data['weapon']
+                self.suggested_character = data['character']
+                self.disproof_turn = (self.turn + 1) % len(self.player_list)
+                self.suggesting = True
+                return True
+        return False
+    
         # data will contain strings data['weapon'] and data['character']. Check to make sure they are strings.
         # check to see if the suggestion is valid (suggestions should contain a character and weapon. The room will be whichever one the character occupies, so check to see 
         #   if the character is in a room and not a hallway)
@@ -227,6 +276,14 @@ class Board():
 
 
     def disprove(self, data):
+        if data['card'] in [self.suggested_room, self.suggested_weapon, self.suggested_character]:
+            self.suggesting = False
+            return True
+        else:
+            self.disproof_turn = (self.disproof_turn + 1) % len(self.player_list)
+            if self.disproof_turn == self.turn:
+                self.suggesting = False
+            return False
         pass
 
 
@@ -245,10 +302,8 @@ class Board():
                 data['room1Name'][i] = character.position.rooms[0].name
                 data['room2Name'][i] = character.position.rooms[1].name
 
-        print(player_id)
         if player_id is not None:
             character = self.get_character_from_playerid(player_id)
-            print(character.cards)
             data['characterIndex'] = self.player_list.index(player_id)
             data['cards'] = []
             for card in character.cards:

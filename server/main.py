@@ -112,10 +112,7 @@ def start_lobby(data):
                 for i, card in enumerate(cards):
                     cards[i] = card
                 emit('message', "Starting game...", room=lobby.get_id())
-                emit('startGame', {
-                    'characterIndex':lobby.get_players().index(sender_id),
-                    'cards':cards
-                    }, room=lobby.get_id())
+                emit('redirect', {'name':'game'}, room=lobby.get_id())
             else:
                 emit('message', "Not enough players to start.")
         else:
@@ -155,7 +152,7 @@ def move(data):
 def suggest(data):
     print("[Server Networking Subsystem] Game suggestion request recieved.")
     sender_id = session.get('id')
-    data['playerid'] = sender_id
+    data['player_id'] = sender_id
     if sender_id is None:
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
@@ -164,8 +161,21 @@ def suggest(data):
     else:
         board = lobby.get_board()
         if board is not None:
-            board.suggest(data)
-            # replicate
+            if board.is_turn(sender_id):
+                success = board.suggest(data)
+                player_character = board.get_character_from_playerid(sender_id)
+                room = player_character.position.name
+                weapon = data['weapon']
+                character = data['character']
+
+                if success:
+                    board.suggester = request.sid
+                    emit('message', f'{player_character.name} suggests {room}, {weapon}, {character}.', room=lobby.get_id())
+                    emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                else:
+                    emit('message', "Invalid suggestion.")
+            else:
+                emit('message', "It is not your turn.")
         else:
             socketio.emit('message', "You are not currently in a game.")
 
@@ -200,7 +210,7 @@ def accuse(data):
 def disprove(data):
     print("[Server Networking Subsystem] Game disproof request recieved.")
     sender_id = session.get('id')
-    data['playerid'] = sender_id
+    data['player_id'] = sender_id
     if sender_id is None:
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
@@ -209,8 +219,24 @@ def disprove(data):
     else:
         board = lobby.get_board()
         if board is not None:
-            board.disprove(data)
-            # replicate
+            if board.is_disproof_turn(sender_id):
+                able_disprove = board.is_able_disprove(sender_id)
+                if data['card'] in [board.suggested_room, board.suggested_weapon, board.suggested_character] or not able_disprove:
+                    success = board.disprove(data)
+                    character = board.get_character_from_playerid(sender_id)
+                    if success:
+                        emit('message', f"{character.name} was able to disprove the suggestion.", room=lobby.get_id())
+                        socketio.emit('message', f'You have recieved the card {data['card']}.', to=board.suggester)
+                        emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                    else:
+                        if board.suggesting:
+                            emit('message', f"{character.name} was unable to disprove the suggestion.", room=lobby.get_id())
+                        else:
+                            emit('message', "Noone was able to disprove the suggestion.", room=lobby.get_id())
+                else:
+                    emit('message', "That is not a valid disproof.")
+            else:
+                emit('message', "It is not your turn.")
         else:
             socketio.emit('message', "You are not currently in a game.")
 
@@ -228,9 +254,13 @@ def end_turn():
         board = lobby.get_board()
         if board is not None:
             if board.is_turn(sender_id):
-                board.end_turn()
-                emit('message', "f'Player {short(sender_id)} has ended their turn.'", room=lobby.get_id())
-                emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                success = board.end_turn()
+                character = board.get_character_from_playerid(sender_id)
+                if success:
+                    emit('message', f'Player {character.name} has ended their turn.', room=lobby.get_id())
+                    emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                else:
+                    emit('message', "Unable to end your turn at this moment.")
             else:
                 socketio.emit('message', "It is not your turn.",  to=request.sid)
         else:

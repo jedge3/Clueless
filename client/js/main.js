@@ -57,8 +57,12 @@ socket.on('message', function(msg) {
 
 // data['characterIndex']: index of the player's character
 // data['cards']: list of the cards we have
-socket.on('startGame', function(data) {
-    window.location.href = 'game.html';
+socket.on('redirect', function(data) {
+    if (data['name'] == 'game'){
+        window.location.href = 'game.html';
+    }else if (data['name'] == 'index' || data['name'] == 'lobby') {
+        window.location.href = 'index.html';
+    }
 });
 
 // data['characterIndex']: The index of our character in the character list.
@@ -73,6 +77,16 @@ socket.on('replicate', function(data) {
     if (data['characterIndex'] != null) {
         boardObject.characterIndex = data['characterIndex'];
         boardObject.knownCards = data['cards'];
+
+        // Update card options
+        const clueSelection = document.getElementById("selectClue");
+        clueSelection.options.length = 0;
+        for (let card of boardObject.knownCards) {
+            const newOption = document.createElement("option");
+            newOption.text = card;
+            newOption.value = card;
+            clueSelection.appendChild(newOption);
+        }
     }
 
     // Update character positions
@@ -181,9 +195,8 @@ function accuse() {
 }
 
 function reveal() {
-    const cardName = document.getElementById('selectClue');
-    socket.emit('disprove', {cardName:cardName.value});
-    console.log(cardName.value);
+    const cardElement = document.getElementById('selectClue');
+    socket.emit('disprove', {card:cardElement.value});
 }
 
 function endTurn() {

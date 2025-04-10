@@ -29,10 +29,8 @@ export class Hallway {
     }
 
     addRoom(room) {
-        console.log(room)
         this.rooms.push(room);
         room.hallways.push(this)
-        console.log(this)
     }
 }
 
@@ -103,7 +101,6 @@ export class Board {
 
     getHallwaysAttachedToRoom(room) {
         let attached_hallways = []
-        console.log(room.name)
         for (let hallway of this.hallways) {
             if (hallway.rooms.includes(room.Name)) {
                 console.log(hallway.rooms)

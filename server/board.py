@@ -222,8 +222,6 @@ class Board():
 
 
     def get_replicate_data(self, player_id):
-        print("attempting replicate")
-
         # turn game state into replicable data
         character = self.get_character_from_playerid(player_id)
         data = {}

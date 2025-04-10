@@ -87,16 +87,18 @@ export class Board {
     }
 
     getHallwayFromRoomNames(room1Name, room2Name) {
+        let room1 = this.rooms[room1Name];
+        let room2 = this.rooms[room2Name];
+        return this.getHallwayFromRooms(room1, room2);
+    }
+
+    getHallwayFromRooms(room1, room2) {
         for (let hallway of this.hallways) {
-            if (hallway.rooms.includes(room1Name) && hallway.rooms.includes(room2Name)) {
+            if (hallway.rooms.includes(room1) && hallway.rooms.includes(room2)) {
                 return hallway;
             }
         }
         return null;
-    }
-
-    getHallwayFromRooms(room1, room2) {
-        return this.getHallwayFromRoomNames(room1.Name, room2.Name);
     }
 
     getHallwaysAttachedToRoom(room) {

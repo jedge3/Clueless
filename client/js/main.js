@@ -69,6 +69,7 @@ socket.on('startGame', function(data) {
 // data['room1Name']: 6 element string list, name of the room1 of the hallway the character is in
 // data['room2Name']: 6 element string list, name of the room2 of the hallway the character is in
 socket.on('replicate', function(data) {
+    console.log(data)
     console.log("Recieve replicate signal.");
 
     // Update character index and cards

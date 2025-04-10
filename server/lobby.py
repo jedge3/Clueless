@@ -31,11 +31,13 @@ class Lobby():
         print("[Game Logic Subsystem]: Lobby created.")
         self.owner_id = owner_id
         self.player_ids = [owner_id]
-        Lobby.instances.append(self)
         global lobbies_created
         self.lobby_id = lobbies_created # want to make this an eight digit code in the future for security.
-        self.board = None
         lobbies_created += 1
+
+        self.board = None
+
+        Lobby.instances.append(self)
 
 
     def add_player(self, player_id):
@@ -58,7 +60,8 @@ class Lobby():
 
 
     def start_game(self):
-        if len(self.player_ids) > 1:
+        print("Starting game received")
+        if len(self.get_players()) > 1:
             self.board = Board(self)
             return True
         return False

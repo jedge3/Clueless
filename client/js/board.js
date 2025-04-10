@@ -27,20 +27,25 @@ export class Hallway {
         room1.hallways.push(this);
         this.occupied = false
     }
+
+    addRoom(roomName) {
+        this.rooms.push(this.rooms[roomName]);
+        roomName.hallways.push(this)
+    }
 }
 
 
 export class Board {
-    constructor(characterIndex, knownCards) {
-        this.characterIndex = characterIndex;
-        this.knownCards = knownCards;
+    constructor() {
+        this.characterIndex = -1;
+        this.knownCards = [];
 
         this.rooms = {};
         for (let roomName of ROOM_NAMES) {
             this.rooms[roomName] = new Room(roomName);
         }
-        for (let characterName in CHARACTER_NAMES) {
-            let roomName = characterName + " Starting Room";
+        for (let i = 0; i < 6; i++) {
+            let roomName = CHARACTER_NAMES[i] + " Starting Room";
             this.rooms[roomName] = new Room(roomName);
         }
         this.rooms["Study"].passage = this.rooms["Kitchen"];
@@ -66,7 +71,7 @@ export class Board {
         for (let i = 0; i < 6; i++) {
             let hallwayIndex = START_HALLWAYS[i];
             let roomName = CHARACTER_NAMES[i] + " Starting Room";
-            this.hallways[hallwayIndex].rooms.push(this.rooms[roomName]);
+            this.hallways[hallwayIndex].addRoom(this.rooms[roomName])
         }
 
         this.characters = [];
@@ -80,7 +85,7 @@ export class Board {
     }
 
     getHallwayFromRoomNames(room1Name, room2Name) {
-        for (let hallway in this.hallways) {
+        for (let hallway of this.hallways) {
             if (hallway.rooms.includes(room1Name) && hallway.rooms.includes(room2Name)) {
                 return hallway;
             }
@@ -93,9 +98,13 @@ export class Board {
     }
 
     getHallwaysAttachedToRoom(room) {
-        attached_hallways = []
-        for (let hallway in this.hallways) {
+        console.log(room)
+        let attached_hallways = []
+        for (let hallway of this.hallways) {
+            console.log(hallway.rooms)
             if (hallway.rooms.includes(room.Name)) {
+                attached_hallways.push(hallway);
+            } else if (room.hallways.includes(hallway)) {
                 attached_hallways.push(hallway);
             }
         }

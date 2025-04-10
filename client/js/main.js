@@ -1,6 +1,6 @@
 const socket = io("http://localhost:5000")
-var boardObject = null
-import { Board, CHARACTER_NAMES, Hallway} from "./board.js";
+let boardObject = null
+import { Board, CHARACTER_NAMES, Hallway, Room} from "./board.js";
 
 console.log("Started client!")
 
@@ -55,20 +55,14 @@ socket.on('message', function(msg) {
     sendChatMessage(msg);
 });
 
-// data['character_index']: index of the player's character
+// data['characterIndex']: index of the player's character
 // data['cards']: list of the cards we have
-socket.on('start_game', function(data) {
-    console.log("Moving to game.");
-    window.location.href = 'game.html';
-    boardObject = new Board(data['character_index'], data['cards'])
-
-    document.getElementById("clue1").value = data['cards'][0]
-    document.getElementById("clue2").value = data['cards'][1]
-    document.getElementById("clue3").value = data['cards'][2]
-    
-    console.log(boardObject.numberPlayers) // Test
+socket.on('startGame', function(data) {
+    window.location.href = 'game.html';    
 });
 
+// data['characterIndex']: The index of our character in the character list.
+// data['cards']: The names of the cards we own.
 // data['isRoom']: 6 element boolean list, true if the character at the index is in a room | false if in a hallway.
 // next 3, elements will be "" where otherwise inapplicable
 // data['roomName']: 6 element string list, name of the room the character is in
@@ -76,6 +70,10 @@ socket.on('start_game', function(data) {
 // data['room2Name']: 6 element string list, name of the room2 of the hallway the character is in
 socket.on('replicate', function(data) {
     console.log("Recieve replicate signal.");
+
+    // Update character index and cards
+    boardObject.characterIndex = data['characterIndex']
+    boardObject.knownCards = data['cards']
 
     // Update character positions
     for (let i = 0; i < 6; i++) {
@@ -99,8 +97,9 @@ socket.on('replicate', function(data) {
     let character = boardObject.getPlayingCharacter();
     let position = character.position;
     let movablePositions = [];
+    
     if (position instanceof Room) {
-        for (let hallway in boardObject.getHallwayAttachedToRoom(position)) {
+        for (let hallway of boardObject.getHallwaysAttachedToRoom(position)) {
             if (!hallway.occupied) {
                 movablePositions.push(hallway);
             }
@@ -116,22 +115,21 @@ socket.on('replicate', function(data) {
 
     const positionSelection = document.getElementById("selectPosition");
     positionSelection.options.length = 0;
-    for (let position in movablePositions) {
+    for (let position of movablePositions) {
         let text = "";
         let value = "";
         if (position instanceof Room) {
             text = position.name;
             value = "r," + position.name;
         } else if (position instanceof Hallway) {
-            text = "Hallway between " + position.rooms[0] + " and " + position.rooms[1];
-            value = "h," + position.rooms[0] + "," + + position.rooms[1];
+            text = "Hallway between " + position.rooms[0].name + " and " + position.rooms[1].name;
+            value = "h," + position.rooms[0].name + "," + position.rooms[1].name;
         }
         const newOption = document.createElement("option");
         newOption.text = text;
         newOption.value = value;
         positionSelection.appendChild(newOption);
     }
-
 
     // Update UI (target increment)
 });
@@ -156,6 +154,7 @@ function startLobby() {
 
 function move() {
     const input = document.getElementById('selectPosition');
+    console.log(input.value);
     socket.emit('move', {position:input.value});
 }
 
@@ -188,7 +187,7 @@ function reveal() {
 }
 
 function endTurn() {
-    console.log();
+    console.log("Ending turn");
 }
 
 
@@ -207,6 +206,8 @@ if (fileName.split(".")[0] == "index") {
     document.querySelector("#accuseButton").addEventListener("click", accuse);
     document.querySelector("#disproveButton").addEventListener("click", reveal);
     document.querySelector("#endTurnButton").addEventListener("click", endTurn);
+    boardObject = new Board()
+    socket.emit('game_connection')
 }
 
 // For testing

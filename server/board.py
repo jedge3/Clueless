@@ -11,6 +11,15 @@ class Character():
         self.position = position
         self.cards = []
 
+    
+    def move_to(self, position):
+        if isinstance(self.position, Hallway):
+            self.position.occupied = False
+        if isinstance(position, Hallway):
+            position.occupied = True
+        self.position = position
+
+
 
 
 class Room():
@@ -23,10 +32,15 @@ class Room():
 
 class Hallway():
     def __init__(self, room1, room2):
-        self.rooms = (room1, room2)
+        self.rooms = [room1, room2]
         self.occupied = False
         room1.hallways.append(self)
         room2.hallways.append(self)
+
+    
+    def add_room(self, room):
+        self.rooms.append(room)
+        room.hallways.append(self)
 
 
 
@@ -52,6 +66,7 @@ class Board():
         global CHARACTER_NAMES
         global START_HALLWAYS
 
+        self.id = lobby.get_id()
         self.player_list = lobby.get_players()
         self.turn = 0 # this will index player_list
         self.disprove_turn = 0 # this will index player_list
@@ -82,38 +97,82 @@ class Board():
         ]
 
         # Characters
-        self.characters = {} # format: [player's id]:[character class]
-        for i, player_id in enumerate(self.player_list):
-            self.characters[player_id] = Character(CHARACTER_NAMES[i], self.hallways[START_HALLWAYS[i]])
+        self.characters = [] # format: [player's id]:[character class]
+        for i, name in enumerate(CHARACTER_NAMES):
+            starting_room = Room(name + " Starting Room")
+            self.hallways[START_HALLWAYS[i]].add_room(starting_room)
+            self.characters.append(Character(name, starting_room))
 
         # Deck setup
         card_names = ROOM_NAMES + WEAPON_NAMES + CHARACTER_NAMES
         deck = []
 
-        for name in card_names:
-            deck.append(Card(name))
 
         self.murder_room = Card(random.choice(ROOM_NAMES))
         self.murder_weapon = Card(random.choice(WEAPON_NAMES))
         self.murder_character = Card(random.choice(CHARACTER_NAMES))
-        deck.remove(self.murder_room)
-        deck.remove(self.murder_weapon)
-        deck.remove(self.murder_character)
+        for name in card_names:
+            if name not in [self.murder_character.name, self.murder_character.name, self.murder_weapon.name]:
+                deck.append(Card(name))
 
         player_index = -1
         while len(deck) > 0:
             player_index +=1
             if player_index == len(self.player_list):
                 player_index = 0
-            character = self.characters[self.player_list[player_index]]
+            character = self.characters[player_index]
 
             card_choice = random.choice(deck)
             character.cards.append(card_choice)
             deck.remove(card_choice)
 
 
-    def move(data):
+    def get_hallway_from_rooms(self, room1, room2):
+        for hallway in self.hallways:
+            if room1 in hallway.rooms and room2 in hallway.rooms:
+                return hallway
+        return None
+
+
+    def get_character_from_playerid(self, id):
+        index = self.player_list.index(id)
+        return self.characters[index]
+        
+
+
+    def move(self, data):
         print("[Game Logic Subsystem]: Recieved board move request. Updating board state.")
+        character = self.get_character_from_playerid(data['player_id'])
+        pos_split = str.split(data['position'], ",")
+
+        if pos_split[0] == "r": # Moving to a room
+            room = self.rooms.get(pos_split[1])
+            if isinstance(character.position, Hallway) and room in character.position.rooms:
+                character.move_to(room)
+            elif room == character.position.passageway:
+                character.move_to(room)
+            else:
+                # error
+                return False
+        elif pos_split[0] == "h": # Moving to a hallway
+            print("HERE THEY ARE")
+            print(data['position'])
+            print(pos_split[1])
+            print(pos_split[2])
+            room1 = self.rooms.get(pos_split[1])
+            room2 = self.rooms.get(pos_split[2])
+            hallway = self.get_hallway_from_rooms(room1, room2)
+            if not hallway.occupied and isinstance(character.position, Room) and character.position in hallway.rooms:
+                character.move_to(hallway)
+            else:
+                # error
+                return False
+        else:
+            #error
+            return False
+
+        return True
+
         # data will contain data['position'] or data['direction'] depending on how we choose to implement it
         # check to see if the player can move to the position derived from the data
         # move the character object's position
@@ -122,7 +181,7 @@ class Board():
         pass
 
 
-    def suggest(data):
+    def suggest(self, data):
         print("[Game Logic Subsystem]: Recieved suggestion request. Each player will decide which card to show the suggester, if they have one of the cards.")
         # data will contain strings data['weapon'] and data['character']. Check to make sure they are strings.
         # check to see if the suggestion is valid (suggestions should contain a character and weapon. The room will be whichever one the character occupies, so check to see 
@@ -134,7 +193,7 @@ class Board():
         pass
 
 
-    def accuse(data):
+    def accuse(self, data):
         print("[Game Logic Subsystem]: Recieved accusation request. If the accusation is correct, the game is over.")
         # data will contain strings data['room'], data['weapon'], and data['character']. Check to make sure they are strings.
         # check if the accusation if valid (accusations must have a character, weapon, and room)
@@ -145,9 +204,36 @@ class Board():
         pass
 
 
-    def disprove(data):
+    def disprove(self, data):
         pass
 
 
-    def end_turn(data):
+    def end_turn(self, data):
         pass
+
+
+    def get_replicate_data(self, player_id):
+        print("attempting replicate")
+
+        # turn game state into replicable data
+        character = self.get_character_from_playerid(player_id)
+        data = {}
+        data['isRoom'] = [False] * 6
+        data['roomName'] = [""] * 6
+        data['room1Name'] = [""] * 6
+        data['room2Name'] = [""] * 6
+        for i, character in enumerate(self.characters):
+            if isinstance(character.position, Room):
+                data['isRoom'][i] = True
+                data['roomName'][i] = character.position.name
+            elif isinstance(character.position, Hallway):
+                data['room1Name'][i] = character.position.rooms[0].name
+                data['room2Name'][i] = character.position.rooms[1].name
+
+        data['characterIndex'] = self.player_list.index(player_id)
+        data['cards'] = []
+        for card in character.cards:
+            data['cards'].append(card.name)
+
+        # send game state data to the client
+        return data

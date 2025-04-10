@@ -104,10 +104,17 @@ def start_lobby(data):
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None:
         if lobby.is_owner(sender_id):
-            success = lobby.start_game()
-            if success:
+            if len(lobby.get_players()) >= 2:
+                lobby.start_game()
+                board = lobby.get_board()
+                cards = board.get_character_from_playerid(sender_id).cards
+                for i, card in enumerate(cards):
+                    cards[i] = card.name
                 emit('message', "Starting game...", room=lobby.get_id())
-                emit('start_game', {}, room=lobby.get_id())
+                emit('startGame', {
+                    'characterIndex':lobby.get_players().index(sender_id),
+                    'cards':cards
+                    }, room=lobby.get_id())
             else:
                 emit('message', "Not enough players to start.")
         else:
@@ -121,6 +128,7 @@ def start_lobby(data):
 def move(data):
     print("[Server Networking Subsystem] Game move request recieved.")
     sender_id = session.get('id')
+    data['player_id'] = sender_id
     if sender_id is None:
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
@@ -140,6 +148,7 @@ def move(data):
 def suggest(data):
     print("[Server Networking Subsystem] Game suggestion request recieved.")
     sender_id = session.get('id')
+    data['playerid'] = sender_id
     if sender_id is None:
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
@@ -158,6 +167,7 @@ def suggest(data):
 def accuse(data):
     print("[Server Networking Subsystem] Game accusation request recieved.")
     sender_id = session.get('id')
+    data['playerid'] = sender_id
     if sender_id is None:
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
@@ -173,9 +183,10 @@ def accuse(data):
 
         
 @socketio.on('disprove')
-def accuse(data):
+def disprove(data):
     print("[Server Networking Subsystem] Game disproof request recieved.")
     sender_id = session.get('id')
+    data['playerid'] = sender_id
     if sender_id is None:
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
@@ -191,9 +202,10 @@ def accuse(data):
 
 
 @socketio.on('end_turn')
-def accuse():
+def end_turn(data):
     print("[Server Networking Subsystem] Game disproof request recieved.")
     sender_id = session.get('id')
+    data['playerid'] = sender_id
     if sender_id is None:
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
@@ -204,6 +216,23 @@ def accuse():
         if board is not None:
             board.end_turn()
             # replicate
+        else:
+            socketio.emit('message', "You are not currently in a game.")
+
+    
+@socketio.on('game_connection')
+def game_connect():
+    print("[Server Networking Subsystem] Game connection request recieved.")
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is None:
+        socketio.emit('message', "You are not currently in a lobby.")
+    else:
+        board = lobby.get_board()
+        if board is not None:
+            emit('replicate', board.get_replicate_data(sender_id))
         else:
             socketio.emit('message', "You are not currently in a game.")
 

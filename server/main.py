@@ -163,12 +163,12 @@ def suggest(data):
         if board is not None:
             if board.is_turn(sender_id):
                 success = board.suggest(data)
-                player_character = board.get_character_from_playerid(sender_id)
-                room = player_character.position.name
-                weapon = data['weapon']
-                character = data['character']
 
                 if success:
+                    player_character = board.get_character_from_playerid(sender_id)
+                    room = player_character.position.name
+                    weapon = data['weapon']
+                    character = data['character']
                     board.suggester = request.sid
                     emit('message', f'{player_character.name} suggests {room}, {weapon}, {character}.', room=lobby.get_id())
                     emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
@@ -195,11 +195,14 @@ def accuse(data):
         if board is not None:
             if board.is_turn(sender_id):
                 success = board.accuse(data)
+                character = board.get_character_from_playerid(sender_id)
                 if success:
+                    emit('message', f"{character.name} has successfully accused the murderer. Game over.", room=lobby.get_id())
                     emit('message', "Correct accusation. You have won!")
                     emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                 else:
                     emit('message', "Incorrect accusation. You have been eliminated.")
+                    emit('message', f"{character.name} has been eliminated by a false accusation.", room=lobby.get_id())
             else:
                 emit('message', "It is not your turn.")
         else:

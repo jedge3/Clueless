@@ -123,8 +123,6 @@ class Board():
             card_choice = random.choice(deck)
             character.cards.append(card_choice)
             deck.remove(card_choice)
-            print("deck")
-            print(character.cards)
 
 
     def get_hallway_from_rooms(self, room1, room2):

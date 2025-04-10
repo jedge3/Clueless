@@ -28,9 +28,11 @@ export class Hallway {
         this.occupied = false
     }
 
-    addRoom(roomName) {
-        this.rooms.push(this.rooms[roomName]);
-        roomName.hallways.push(this)
+    addRoom(room) {
+        console.log(room)
+        this.rooms.push(room);
+        room.hallways.push(this)
+        console.log(this)
     }
 }
 
@@ -99,8 +101,10 @@ export class Board {
 
     getHallwaysAttachedToRoom(room) {
         let attached_hallways = []
+        console.log(room.name)
         for (let hallway of this.hallways) {
             if (hallway.rooms.includes(room.Name)) {
+                console.log(hallway.rooms)
                 attached_hallways.push(hallway);
             } else if (room.hallways.includes(hallway)) {
                 attached_hallways.push(hallway);

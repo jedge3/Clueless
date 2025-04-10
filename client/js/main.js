@@ -58,7 +58,7 @@ socket.on('message', function(msg) {
 // data['characterIndex']: index of the player's character
 // data['cards']: list of the cards we have
 socket.on('startGame', function(data) {
-    window.location.href = 'game.html';    
+    window.location.href = 'game.html';
 });
 
 // data['characterIndex']: The index of our character in the character list.

@@ -88,17 +88,23 @@ class Board():
 
         # Deck setup
         card_names = ROOM_NAMES + WEAPON_NAMES + CHARACTER_NAMES
-        deck = []
 
+        murder_room_name = random.choice(ROOM_NAMES)
+        card_names.remove(murder_room_name)
+
+        murder_weapon_name = random.choice(WEAPON_NAMES)
+        card_names.remove(murder_weapon_name)
+
+        murder_character_name = random.choice(CHARACTER_NAMES)
+        card_names.remove(murder_character_name)
+
+        self.murder_room = Card(murder_room_name)
+        self.murder_weapon = Card(murder_weapon_name)
+        self.murder_character = Card(murder_character_name)
+
+        deck = []
         for name in card_names:
             deck.append(Card(name))
-
-        self.murder_room = Card(random.choice(ROOM_NAMES))
-        self.murder_weapon = Card(random.choice(WEAPON_NAMES))
-        self.murder_character = Card(random.choice(CHARACTER_NAMES))
-        deck.remove(self.murder_room)
-        deck.remove(self.murder_weapon)
-        deck.remove(self.murder_character)
 
         player_index = -1
         while len(deck) > 0:

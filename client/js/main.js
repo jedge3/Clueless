@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // data['cards']: list of the cards we have
     socket.on('start_game', function(data) {
         console.log("Moving to game.");
-        window.location.href = 'game.html';
+        window.location.href = '/game';
         boardObject = new Board(data['character_index'], data['cards'])
 
         document.getElementById("clue1").value = data['cards'][0]

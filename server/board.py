@@ -44,20 +44,6 @@ class Hallway():
 
 
 
-class Card():
-    def __init__(self, name):
-        self.name = name
-        if name in ROOM_NAMES:
-            self.type = "room"
-        elif name in WEAPON_NAMES:
-            self.type = "weapon"
-        elif name in CHARACTER_NAMES:
-            self.type = "character"
-        else:
-            raise Exception("Invalid card name.")
-
-
-
 class Board():
     def __init__(self, lobby):
         print("[Game Logic Subsystem]: Board created and state initialized.")
@@ -68,9 +54,12 @@ class Board():
 
         self.id = lobby.get_id()
         self.player_list = lobby.get_players()
-        self.turn = 0 # this will index player_list
         self.disprove_turn = 0 # this will index player_list
         self.eliminated = [False] * len(self.player_list)
+
+        self.turn = 0 # this will index player_list
+        self.moved = False
+        self.suggested = False
 
         # Rooms
         self.rooms = {}
@@ -105,27 +94,26 @@ class Board():
             self.characters.append(Character(name, starting_room))
 
         # Deck setup
-        card_names = ROOM_NAMES + WEAPON_NAMES + CHARACTER_NAMES
-        deck = []
+        deck = ROOM_NAMES + WEAPON_NAMES + CHARACTER_NAMES
 
-
-        self.murder_room = Card(random.choice(ROOM_NAMES))
-        self.murder_weapon = Card(random.choice(WEAPON_NAMES))
-        self.murder_character = Card(random.choice(CHARACTER_NAMES))
-        for name in card_names:
-            if name not in [self.murder_character.name, self.murder_character.name, self.murder_weapon.name]:
-                deck.append(Card(name))
+        self.murder_room = random.choice(ROOM_NAMES)
+        self.murder_weapon = random.choice(WEAPON_NAMES)
+        self.murder_character = random.choice(CHARACTER_NAMES)
+        deck.remove(self.murder_room)
+        deck.remove(self.murder_weapon)
+        deck.remove(self.murder_character)
 
         player_index = -1
         while len(deck) > 0:
             player_index +=1
-            if player_index == len(self.player_list):
-                player_index = 0
+            player_index = player_index % len(self.player_list)
             character = self.characters[player_index]
 
             card_choice = random.choice(deck)
             character.cards.append(card_choice)
             deck.remove(card_choice)
+            print("deck")
+            print(character.cards)
 
 
     def get_hallway_from_rooms(self, room1, room2):
@@ -152,8 +140,13 @@ class Board():
             if not self.eliminated[self.turn]:
                 break
             elif i == len(self.player_list):
-                winning_player_id = self.player_list[self.turn]
-                # This player won
+                print("Game over. Everyone has lost.")
+                self.end_game()
+ 
+
+    def end_game(self):
+        #End the game
+        pass
 
 
     def move(self, data):
@@ -183,7 +176,6 @@ class Board():
             print("An error has occured")
             return False
 
-        self.end_turn()
         return True
 
         # data will contain data['position'] or data['direction'] depending on how we choose to implement it
@@ -208,6 +200,23 @@ class Board():
 
     def accuse(self, data):
         print("[Game Logic Subsystem]: Recieved accusation request. If the accusation is correct, the game is over.")
+        print(data)
+        if data['weapon'] == self.murder_weapon and data['character'] == self.murder_character and data['room'] == self.murder_room:
+            winning_player_id = self.player_list[self.turn]
+            print("Player has won the game!")
+            self.end_game()
+            # this player wins
+            return True
+        else:
+            self.eliminated[self.turn] = True
+            self.end_turn()
+            return False
+        
+        return False
+
+
+
+
         # data will contain strings data['room'], data['weapon'], and data['character']. Check to make sure they are strings.
         # check if the accusation if valid (accusations must have a character, weapon, and room)
         # check to see if the accusation matches the murder held in the game state
@@ -223,7 +232,6 @@ class Board():
 
     def get_replicate_data(self, player_id):
         # turn game state into replicable data
-        character = self.get_character_from_playerid(player_id)
         data = {}
         data['isRoom'] = [False] * 6
         data['roomName'] = [""] * 6
@@ -237,10 +245,14 @@ class Board():
                 data['room1Name'][i] = character.position.rooms[0].name
                 data['room2Name'][i] = character.position.rooms[1].name
 
-        data['characterIndex'] = self.player_list.index(player_id)
-        data['cards'] = []
-        for card in character.cards:
-            data['cards'].append(card.name)
+        print(player_id)
+        if player_id is not None:
+            character = self.get_character_from_playerid(player_id)
+            print(character.cards)
+            data['characterIndex'] = self.player_list.index(player_id)
+            data['cards'] = []
+            for card in character.cards:
+                data['cards'].append(card)
 
         # send game state data to the client
         return data

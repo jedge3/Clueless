@@ -70,8 +70,10 @@ socket.on('startGame', function(data) {
 // data['room2Name']: 6 element string list, name of the room2 of the hallway the character is in
 socket.on('replicate', function(data) {
     // Update character index and cards
-    boardObject.characterIndex = data['characterIndex']
-    boardObject.knownCards = data['cards']
+    if (data['characterIndex'] != null) {
+        boardObject.characterIndex = data['characterIndex'];
+        boardObject.knownCards = data['cards'];
+    }
 
     // Update character positions
     for (let i = 0; i < 6; i++) {
@@ -185,7 +187,7 @@ function reveal() {
 }
 
 function endTurn() {
-    console.log("Ending turn");
+    socket.emit('end_turn');
 }
 
 

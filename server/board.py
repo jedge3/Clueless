@@ -70,6 +70,7 @@ class Board():
         self.player_list = lobby.get_players()
         self.turn = 0 # this will index player_list
         self.disprove_turn = 0 # this will index player_list
+        self.eliminated = [False] * len(self.player_list)
 
         # Rooms
         self.rooms = {}
@@ -139,6 +140,21 @@ class Board():
         return self.characters[index]
         
 
+    def is_turn(self, player_id):
+        return self.player_list.index(player_id) == self.turn
+
+
+    def end_turn(self):
+        for i in range(len(self.player_list)):
+            self.turn += 1
+            self.turn = self.turn % len(self.player_list)
+
+            if not self.eliminated[self.turn]:
+                break
+            elif i == len(self.player_list):
+                winning_player_id = self.player_list[self.turn]
+                # This player won
+
 
     def move(self, data):
         print("[Game Logic Subsystem]: Recieved board move request. Updating board state.")
@@ -167,6 +183,7 @@ class Board():
             print("An error has occured")
             return False
 
+        self.end_turn()
         return True
 
         # data will contain data['position'] or data['direction'] depending on how we choose to implement it
@@ -201,10 +218,6 @@ class Board():
 
 
     def disprove(self, data):
-        pass
-
-
-    def end_turn(self, data):
         pass
 
 

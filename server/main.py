@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import uuid
 from lobby import Lobby
+import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "themagnificent6_clueless"
@@ -200,6 +201,10 @@ def accuse(data):
                     emit('message', f"{character.name} has successfully accused the murderer. Game over.", room=lobby.get_id())
                     emit('message', "Correct accusation. You have won!")
                     emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                    
+                    time.sleep(5)
+
+                    emit('redirect', {'name':'lobby'})
                 else:
                     emit('message', "Incorrect accusation. You have been eliminated.")
                     emit('message', f"{character.name} has been eliminated by a false accusation.", room=lobby.get_id())
@@ -278,13 +283,14 @@ def game_connect():
         return
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is None:
-        socketio.emit('message', "You are not currently in a lobby.")
+        emit('message', "You are not currently in a lobby.")
+        emit('redirect', {'name':'lobby'})
     else:
         board = lobby.get_board()
         if board is not None:
             emit('replicate', board.get_replicate_data(sender_id))
         else:
-            socketio.emit('message', "You are not currently in a game.")
+            emit('message', "You are not currently in a game.")
 
 
 if __name__ == "__main__":

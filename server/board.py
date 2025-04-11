@@ -226,6 +226,8 @@ class Board():
         room = character.position
         if isinstance(room, Room):
             if room.name in ROOM_NAMES and data['weapon'] in WEAPON_NAMES and data['character'] in CHARACTER_NAMES:
+                suggested_character = self.characters[CHARACTER_NAMES.index(data['character'])]
+                suggested_character.position = room
                 self.suggested = True
                 self.suggested_room = room.name
                 self.suggested_weapon = data['weapon']

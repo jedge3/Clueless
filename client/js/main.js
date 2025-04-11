@@ -1,8 +1,8 @@
-const socket = io("http://localhost:5000")
-let boardObject = null
+const socket = io("http://localhost:5000");
+let boardObject = null;
 import { Board, CHARACTER_NAMES, Hallway, Room} from "./board.js";
 
-console.log("Started client!")
+console.log("Started client!");
 
 function setCookie(name, value, days) {
     let expires = '';
@@ -48,7 +48,7 @@ socket.on('connect', startConnection)
 socket.on('getId', startConnection);
 
 socket.on('setId', function(id) {
-    setCookie('socketId', id, 7)
+    setCookie('socketId', id, 7);
 });
 
 socket.on('message', function(msg) {
@@ -73,7 +73,6 @@ socket.on('redirect', function(data) {
 // data['room1Name']: 6 element string list, name of the room1 of the hallway the character is in
 // data['room2Name']: 6 element string list, name of the room2 of the hallway the character is in
 socket.on('replicate', function(data) {
-    sendChatMessage("Replication request recieved.")
     console.log("Replication request recieved.");
     console.log(data);
     // Update character index and cards
@@ -106,14 +105,12 @@ socket.on('replicate', function(data) {
         if (data['isRoom'][i]) {
             newPosition = boardObject.rooms[data['roomName'][i]];
             if (boardObject.characters[i].position != newPosition) {
-                console.log("Test1")
                 sendChatMessage(CHARACTER_NAMES[i] + " moved to " + newPosition.name + ".");
                 boardObject.characters[i].position = newPosition;
             }
         } else {
             newPosition = boardObject.getHallwayFromRoomNames(data['room1Name'][i], data['room2Name'][i]);
             if (boardObject.characters[i].position != newPosition) {
-                console.log("Test2")
                 sendChatMessage(CHARACTER_NAMES[i] + " moved to the hallway between " + data['room1Name'][i] + " and " + data['room2Name'][i] + ".");
                 boardObject.characters[i].position = newPosition;
             }
@@ -146,6 +143,9 @@ socket.on('replicate', function(data) {
         let text = "";
         let value = "";
         if (position instanceof Room) {
+            if (position.name.split(" ")[2] == "Starting") {
+                continue
+            }
             text = position.name;
             value = "r," + position.name;
         } else if (position instanceof Hallway) {

@@ -40,3 +40,15 @@ This guide is for configuring your Windows machine to run the Clueless server.
     Since *pip* may already be installed on your system in the local packages, using *python -m* will ensure that the installed package is for your global Python version as set by *pyenv*.
 
 4. To run the program, start the server by running server/main.py Then open client/index.html instances for each player (have to be seperate browsers).
+
+
+
+
+
+Additional step. It may be required to setup a local http server in order to connect with the server.
+run
+    python -m http.server
+in the command line at the project folder directory
+This will host the http server on
+    127.0.0.1:8000/client/index.html
+navigate there on a browser to view the page.

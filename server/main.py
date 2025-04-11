@@ -203,10 +203,10 @@ def accuse(data):
                     emit('message', f"{character.name} has successfully accused the murderer. Game over.", room=lobby.get_id())
                     emit('message', "Correct accusation. You have won!")
                     emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
-                    
+                    lobby.end_game()
                     time.sleep(5)
 
-                    emit('redirect', {'name':'lobby'})
+                    emit('redirect', {'name':'lobby'}, room=lobby.get_id())
                 else:
                     emit('message', "Incorrect accusation. You have been eliminated.")
                     emit('message', f"{character.name} has been eliminated by a false accusation.", room=lobby.get_id())
@@ -253,7 +253,7 @@ def disprove(data):
 
 @socketio.on('end_turn')
 def end_turn():
-    print("[Server Networking Subsystem] Game disproof request recieved.")
+    print("[Server Networking Subsystem] Game end turn request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -290,10 +290,24 @@ def game_connect():
     else:
         board = lobby.get_board()
         if board is not None:
-            time.sleep(1)
+            time.sleep(0.1)
             emit('replicate', board.get_replicate_data(sender_id))
         else:
             emit('message', "You are not currently in a game.")
+
+
+@socketio.on('lobby_connection')
+def lobby_connection():
+    print("[Server Networking Subsystem] Lobby connection request recieved.")
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is not None:
+        board = lobby.get_board()
+        if board is not None:
+            time.sleep(0.1)
+            emit('redirect', {'name':'game'})
 
 
 if __name__ == "__main__":

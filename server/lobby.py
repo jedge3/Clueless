@@ -67,6 +67,10 @@ class Lobby():
         return False
 
 
+    def end_game(self):
+        self.board = None
+
+
     def is_owner(self, player_id):
         return self.owner_id == player_id
 

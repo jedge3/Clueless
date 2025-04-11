@@ -225,6 +225,7 @@ if (fileName.split(".")[0] == "index") {
     document.querySelector("#joinButton").addEventListener("click", joinLobby);
     document.querySelector("#leaveButton").addEventListener("click", leaveLobby);
     document.querySelector("#startButton").addEventListener("click", startLobby);
+    socket.emit('lobby_connection')
 } else if (fileName.split(".")[0] == "game") {
     console.log("Game buttons connected.");
     boardObject = new Board()

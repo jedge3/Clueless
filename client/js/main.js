@@ -52,7 +52,7 @@ socket.on('setId', function(id) {
 });
 
 socket.on('message', function(msg) {
-    sendChatMessage(msg);
+    sendChatMessage("[Server]: " + msg);
 });
 
 // data['characterIndex']: index of the player's character
@@ -73,10 +73,17 @@ socket.on('redirect', function(data) {
 // data['room1Name']: 6 element string list, name of the room1 of the hallway the character is in
 // data['room2Name']: 6 element string list, name of the room2 of the hallway the character is in
 socket.on('replicate', function(data) {
+    sendChatMessage("Replication request recieved.")
+    console.log("Replication request recieved.");
+    console.log(data);
     // Update character index and cards
     if (data['characterIndex'] != null) {
         boardObject.characterIndex = data['characterIndex'];
         boardObject.knownCards = data['cards'];
+
+        // Update character label
+        const characterLabel = document.getElementById("characterLabel")
+        characterLabel.textContent = "Your character is " + CHARACTER_NAMES[boardObject.characterIndex] + "."
 
         // Update card options
         const clueSelection = document.getElementById("selectClue");
@@ -89,18 +96,24 @@ socket.on('replicate', function(data) {
         }
     }
 
+    // Update turn label
+    const turnLabel = document.getElementById("turnLabel")
+    turnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn."
+
     // Update character positions
     for (let i = 0; i < 6; i++) {
         let newPosition;
         if (data['isRoom'][i]) {
             newPosition = boardObject.rooms[data['roomName'][i]];
             if (boardObject.characters[i].position != newPosition) {
+                console.log("Test1")
                 sendChatMessage(CHARACTER_NAMES[i] + " moved to " + newPosition.name + ".");
                 boardObject.characters[i].position = newPosition;
             }
         } else {
             newPosition = boardObject.getHallwayFromRoomNames(data['room1Name'][i], data['room2Name'][i]);
             if (boardObject.characters[i].position != newPosition) {
+                console.log("Test2")
                 sendChatMessage(CHARACTER_NAMES[i] + " moved to the hallway between " + data['room1Name'][i] + " and " + data['room2Name'][i] + ".");
                 boardObject.characters[i].position = newPosition;
             }
@@ -214,12 +227,12 @@ if (fileName.split(".")[0] == "index") {
     document.querySelector("#startButton").addEventListener("click", startLobby);
 } else if (fileName.split(".")[0] == "game") {
     console.log("Game buttons connected.");
+    boardObject = new Board()
     document.querySelector("#moveButton").addEventListener("click", move);
     document.querySelector("#suggestButton").addEventListener("click", suggest);
     document.querySelector("#accuseButton").addEventListener("click", accuse);
     document.querySelector("#disproveButton").addEventListener("click", reveal);
     document.querySelector("#endTurnButton").addEventListener("click", endTurn);
-    boardObject = new Board()
     socket.emit('game_connection')
 }
 

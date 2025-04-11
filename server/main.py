@@ -139,7 +139,8 @@ def move(data):
             if board.is_turn(sender_id):
                 success = board.move(data)
                 if success:
-                    emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                    print("replicating game state")
+                    socketio.emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                 else:
                     emit('message', "An error occured.")
             else:
@@ -172,7 +173,8 @@ def suggest(data):
                     character = data['character']
                     board.suggester = request.sid
                     emit('message', f'{player_character.name} suggests {room}, {weapon}, {character}.', room=lobby.get_id())
-                    emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                    time.sleep(1)
+                    socketio.emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                 else:
                     emit('message', "Invalid suggestion.")
             else:
@@ -266,7 +268,7 @@ def end_turn():
                 character = board.get_character_from_playerid(sender_id)
                 if success:
                     emit('message', f'Player {character.name} has ended their turn.', room=lobby.get_id())
-                    emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                    socketio.emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                 else:
                     emit('message', "Unable to end your turn at this moment.")
             else:
@@ -288,6 +290,7 @@ def game_connect():
     else:
         board = lobby.get_board()
         if board is not None:
+            time.sleep(1)
             emit('replicate', board.get_replicate_data(sender_id))
         else:
             emit('message', "You are not currently in a game.")

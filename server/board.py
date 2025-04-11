@@ -177,7 +177,6 @@ class Board():
 
     def move(self, data):
         print("[Game Logic Subsystem]: Recieved board move request. Updating board state.")
-
         if self.moved:
             return False
         
@@ -185,6 +184,7 @@ class Board():
         pos_split = str.split(data['position'], ",")
 
         if pos_split[0] == "r": # Moving to a room
+            print("Moving to a room")
             room = self.rooms.get(pos_split[1])
             if isinstance(character.position, Hallway) and room in character.position.rooms:
                 character.move_to(room)
@@ -194,13 +194,13 @@ class Board():
                 print("An error has occured")
                 return False
         elif pos_split[0] == "h": # Moving to a hallway
+            print("Moving to a hallway")
             room1 = self.rooms.get(pos_split[1])
             room2 = self.rooms.get(pos_split[2])
             hallway = self.get_hallway_from_rooms(room1, room2)
             if not hallway.occupied and isinstance(character.position, Room) and character.position in hallway.rooms:
                 character.move_to(hallway)
             else:
-                print("An error has occured")
                 return False
         else:
             print("An error has occured")
@@ -288,6 +288,7 @@ class Board():
     def get_replicate_data(self, player_id):
         # turn game state into replicable data
         data = {}
+        data['turn'] = self.turn
         data['isRoom'] = [False] * 6
         data['roomName'] = [""] * 6
         data['room1Name'] = [""] * 6

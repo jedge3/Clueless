@@ -98,7 +98,7 @@ export class Board {
         }
         return null;
     }
-
+    
     getHallwaysAttachedToRoom(room) {
         let attached_hallways = []
         for (let hallway of this.hallways) {
@@ -110,5 +110,16 @@ export class Board {
             }
         }
         return attached_hallways;
+    }
+    
+    getPositionName(position) {
+        console.log(position)
+        if (position instanceof Room) {
+            return position.name;
+        } else if (position instanceof Hallway) {
+            return "hallway between " + position.rooms[0].name + " and " + position.rooms[1].name;
+        } else {
+            return "[undefined position]";
+        }
     }
 }

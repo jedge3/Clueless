@@ -94,10 +94,14 @@ socket.on('replicate', function(data) {
             clueSelection.appendChild(newOption);
         }
     }
-
+    
     // Update turn label
-    const turnLabel = document.getElementById("turnLabel")
-    turnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn."
+    const turnLabel = document.getElementById("turnLabel");
+    if (data['turn'] == boardObject.characterIndex) {
+        turnLabel.textContent = "It is your turn.";
+    } else {
+        turnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn.";
+    }
 
     // Update character positions
     for (let i = 0; i < 6; i++) {
@@ -105,17 +109,21 @@ socket.on('replicate', function(data) {
         if (data['isRoom'][i]) {
             newPosition = boardObject.rooms[data['roomName'][i]];
             if (boardObject.characters[i].position != newPosition) {
-                sendChatMessage(CHARACTER_NAMES[i] + " moved to " + newPosition.name + ".");
+                sendChatMessage("[Replication]: " + CHARACTER_NAMES[i] + " moved to " + newPosition.name + ".");
                 boardObject.characters[i].position = newPosition;
             }
         } else {
             newPosition = boardObject.getHallwayFromRoomNames(data['room1Name'][i], data['room2Name'][i]);
             if (boardObject.characters[i].position != newPosition) {
-                sendChatMessage(CHARACTER_NAMES[i] + " moved to the hallway between " + data['room1Name'][i] + " and " + data['room2Name'][i] + ".");
+                sendChatMessage("[Replication]: " + CHARACTER_NAMES[i] + " moved to the " + boardObject.getPositionName(newPosition) + ".");
                 boardObject.characters[i].position = newPosition;
             }
         }
     }
+
+    // Update position label
+    const positionLabel = document.getElementById("positionLabel")
+    positionLabel.textContent = "You are in the " + boardObject.getPositionName(boardObject.getPlayingCharacter().position) + "."
 
     // Update movable positions
     let character = boardObject.getPlayingCharacter();

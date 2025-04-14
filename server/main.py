@@ -210,6 +210,7 @@ def accuse(data):
                 elif success == False:
                     emit('message', "Incorrect accusation. You have been eliminated.")
                     emit('message', f"{character.name} has been eliminated by a false accusation.", room=lobby.get_id())
+                    emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                 else:
                     emit('message', "Cannot accuse at this time.")
             else:

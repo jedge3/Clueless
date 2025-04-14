@@ -320,6 +320,9 @@ def lobby_connection():
         if board is not None:
             time.sleep(0.1)
             emit('redirect', {'name':'game'})
+        else:
+            for player_id in lobby.get_players():
+                emit('message', f'Player [{short(player_id)}] has joined the lobby.')
 
 
 if __name__ == "__main__":

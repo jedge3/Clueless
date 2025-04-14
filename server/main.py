@@ -199,7 +199,7 @@ def accuse(data):
             if board.is_turn(sender_id):
                 success = board.accuse(data)
                 character = board.get_character_from_playerid(sender_id)
-                if success:
+                if success == True:
                     emit('message', f"{character.name} has successfully accused the murderer. Game over.", room=lobby.get_id())
                     emit('message', "Correct accusation. You have won!")
                     emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
@@ -207,9 +207,11 @@ def accuse(data):
                     time.sleep(5)
 
                     emit('redirect', {'name':'lobby'}, room=lobby.get_id())
-                else:
+                elif success == False:
                     emit('message', "Incorrect accusation. You have been eliminated.")
                     emit('message', f"{character.name} has been eliminated by a false accusation.", room=lobby.get_id())
+                else:
+                    emit('message', "Cannot accuse at this time.")
             else:
                 emit('message', "It is not your turn.")
         else:

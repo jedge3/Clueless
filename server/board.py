@@ -177,7 +177,7 @@ class Board():
 
     def move(self, data):
         print("[Game Logic Subsystem]: Recieved board move request. Updating board state.")
-        if self.moved:
+        if self.moved or self.suggesting:
             return False
         
         character = self.get_character_from_playerid(data['player_id'])
@@ -248,6 +248,8 @@ class Board():
 
 
     def accuse(self, data):
+        if self.suggesting:
+            return
         print("[Game Logic Subsystem]: Recieved accusation request. If the accusation is correct, the game is over.")
         print(data)
         if data['weapon'] == self.murder_weapon and data['character'] == self.murder_character and data['room'] == self.murder_room:

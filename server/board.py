@@ -67,6 +67,8 @@ class Board():
         self.disproof_turn = 0
         self.suggester = None
 
+        self.game_over = False
+
         # Rooms
         self.rooms = {}
         for room in ROOM_NAMES:
@@ -159,19 +161,24 @@ class Board():
         self.moved = False
         self.suggested = False
         for i in range(len(self.player_list)):
+            print(i)
+            print(len(self.player_list) - 1)
             self.turn += 1
             self.turn = self.turn % len(self.player_list)
 
             if not self.eliminated[self.turn]:
+                print("Breaking from loop")
                 break
-            elif i == len(self.player_list):
+            elif i == len(self.player_list) - 1:
                 print("Game over. Everyone has lost.")
                 self.end_game()
+        print("The game isn't over yet.")
+        print(self.eliminated)
         return True
  
 
     def end_game(self):
-        #End the game
+        self.game_over = True
         pass
 
 

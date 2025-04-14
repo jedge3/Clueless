@@ -259,6 +259,8 @@ class Board():
             return
         print("[Game Logic Subsystem]: Recieved accusation request. If the accusation is correct, the game is over.")
         print(data)
+        print("Weapon, Character, Room:")
+        print([self.murder_weapon, self.murder_character, self.murder_room])
         if data['weapon'] == self.murder_weapon and data['character'] == self.murder_character and data['room'] == self.murder_room:
             winning_player_id = self.player_list[self.turn]
             print("Player has won the game!")

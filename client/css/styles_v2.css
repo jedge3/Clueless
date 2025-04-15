@@ -20,6 +20,40 @@ body {
     gap: 25px;
 }
 
+/* use (uncomment) if using clickable board */
+/* from here */
+.rooms-and-hallways{
+    display: flex;
+    height: 450px;
+    width: 450px;
+}
+
+.rooms-and-hallways div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#col2, #col4 {
+    gap: 90px
+}
+
+button.rooms, button.hallways {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+button.rooms img, button.hallways img {
+    display: block;
+    width: 90px;
+    height: 90px;
+}
+/* to here */
+
 #tutorialButton, #turnLabel {
     align-self: flex-end;
     margin-right: 175px;

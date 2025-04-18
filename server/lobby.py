@@ -1,9 +1,19 @@
 from board import Board
+import uuid
 
-lobbies_created = 0
+
+def get_unique_id():
+    while True:
+        id = uuid.uuid4().hex[:4]
+        if Lobby.get_instances().get(id) is not None:
+            continue
+        else:
+            return id
+
+
 
 class Lobby():
-    instances = []
+    instances = {}
 
     @classmethod
     def get_instances(cls):
@@ -11,8 +21,13 @@ class Lobby():
 
 
     @classmethod
+    def add_instance(cls, instance):
+        cls.instances[instance.get_id()] = instance
+
+
+    @classmethod
     def get_lobby_from_player(cls, player_id):
-        for lobby in Lobby.get_instances():
+        for lobby in Lobby.get_instances().values():
             for id in lobby.get_players():
                 if id == player_id:
                     return lobby
@@ -21,23 +36,18 @@ class Lobby():
     
     @classmethod
     def get_lobby_by_id(cls, lobby_id):
-        for lobby in Lobby.get_instances():
-            if lobby.get_id() == lobby_id:
-                return lobby
-        return None
+        return cls.instances.get(lobby_id)
 
 
     def __init__(self, owner_id):
         print("[Game Logic Subsystem]: Lobby created.")
         self.owner_id = owner_id
         self.player_ids = [owner_id]
-        global lobbies_created
-        self.lobby_id = lobbies_created # want to make this an eight digit code in the future for security.
-        lobbies_created += 1
+        self.lobby_id = get_unique_id()
 
         self.board = None
 
-        Lobby.instances.append(self)
+        Lobby.add_instance(self)
 
 
     def add_player(self, player_id):
@@ -60,7 +70,7 @@ class Lobby():
 
 
     def start_game(self):
-        print("Starting game received")
+        print("[Game Logic Subsystem]: Starting game request received.")
         if len(self.get_players()) > 1:
             self.board = Board(self)
             return True

@@ -10,7 +10,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 def short(id):
-    return id[0:8]
+    return id[:8]
 
 
 @app.route('/../client')
@@ -64,15 +64,15 @@ def join_lobby(data):
     else:
         lobby_id = 0
         try:
-            lobby_id = int(data['id'])
-            lobby = Lobby.get_lobby_by_id(int(lobby_id))
+            lobby_id = data['id']
+            lobby = Lobby.get_lobby_by_id(lobby_id)
             assert(lobby is not None)
         except:
             emit('message', f'There is no lobby with the id {str(lobby_id)}.')
             return
         success = lobby.add_player(sender_id)
         if success:
-            emit('message', f'Player [{short(sender_id)}] has joined the lobby.', room=lobby_id)
+            socketio.emit('message', f'Player [{short(sender_id)}] has joined the lobby.', room=lobby_id)
             join_room(lobby_id)
             emit('message', "Successfully joined the lobby.")
         else:
@@ -91,7 +91,7 @@ def leave_lobby(data):
         lobby.remove_player(sender_id)
         leave_room(lobby.get_id())
         emit('message', "Successfully left the lobby.")
-        emit('message', f'Player [{short(sender_id)}] has left the lobby.', room=lobby.get_id())
+        socketio.emit('message', f'Player [{short(sender_id)}] has left the lobby.', room=lobby.get_id())
     else:
         emit('message', "You are not in a lobby.")
 

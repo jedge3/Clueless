@@ -9,69 +9,121 @@
     <link rel="icon" href="assets/images/logo.png" type="image/png">
 </head>
 <body>
-    <div class="button-container">
-        <img src="assets/images/board.png" width="200" height="200">
+    <div id="chatContainer">
         <div id="chat"></div>
-        <label id="turnLabel">It is Col. Mustard's turn.</label>
-        <label id="characterLabel">Your character is undetermined.</label>
-        <label id="positionLabel">You are in the unknown position.</label>
-        <br>
-        <label for="selectPosition">Choose a position:</label>
-        <select id="selectPosition" name="selectPosition">
-        </select>
-
-        <button id="moveButton">Move</button>
-        
-        <label for="selectCharacter">Choose a character:</label>
-        <select id="selectCharacter" name="selectCharacter">
-            <option value="Col. Mustard">Col. Mustard</option>
-            <option value="Miss Scarlet">Miss Scarlet</option>
-            <option value="Prof. Plum">Prof. Plum</option>
-            <option value="Mr. Green">Mr. Green</option>
-            <option value="Mrs. White">Mrs. White</option>
-            <option value="Mrs. Peacock">Mrs. Peacock</option>
-        </select>
-        
-        <br>
-        
-        <label for="selectWeapon">Choose a weapon:</label>
-        <select id="selectWeapon" name="selectWeapon">
-            <option value="Rope">Rope</option>
-            <option value="Lead Pipe">Lead Pipe</option>
-            <option value="Knife">Knife</option>
-            <option value="Wrench">Wrench</option>
-            <option value="Candlestick">Candlestick</option>
-            <option value="Revolver">Revolver</option>
-        </select>
-        
-        <br>
-        
-        <label for="selectRoom">Choose a room:</label>
-        <select id="selectRoom" name="selectRoom">
-            <option value="Study">Study</option>
-            <option value="Hall">Hall</option>
-            <option value="Lounge">Lounge</option>
-            <option value="Library">Library</option>
-            <option value="Billard Room">Billard Room</option>
-            <option value="Dining Room">Dining Room</option>
-            <option value="Conservatory">Conservatory</option>
-            <option value="Ball Room">Ball Room</option>
-            <option value="Kitchen">Kitchen</option>
-        </select>
-        
-        <button id="suggestButton">Suggest</button>
-        <button id="accuseButton">Accuse</button>
-        
-        <label for="selectClue">Choose a clue:</label>
-        <select id="selectClue" name="selectClue">
-            <option id="clue0" value="No Clue">None</option>
-            <option id="clue1" value="Clue1">Clue1</option>
-            <option id="clue2" value="Clue2">Clue2</option>
-            <option id="clue3" value="Clue3">Clue3</option>
-        </select>
-        <button id="disproveButton">Disprove</button>
-        <button id="endTurnButton">End Turn</button>
+        <div id="chatMessageContainer" style="display: flex;">
+            <input type="text" id="chatMessage" placeholder="Enter chat message...">
+            <button id="chatSendMessage">Send</button>
+        </div>
     </div>
-    <script type="module" src="js/main.js"></script>
+    <div class="main-container">
+        <button id="infoButton">i</button>
+        <!-- Uncomment to use the board.png -->
+        <!-- <img src="assets/images/board.png" width="450" height="450"> -->
+        
+        <!-- Comment div below to disable the clickable board -->
+        <div class="rooms-and-hallways">
+            <div id="col1">
+                <button class="rooms">
+                    <img src="assets/images/rooms_study.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_vertical.png" width="90" height="90">
+                </button>
+                <button class="rooms">
+                    <img src="assets/images/rooms_library.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_vertical.png" width="90" height="90">
+                </button>
+                <button class="rooms">
+                    <img src="assets/images/rooms_conservatory.png" width="90" height="90">
+                </button>
+            </div>
+
+            <div id="col2">
+                <button class="hallways">
+                    <img src="assets/images/hallway_horizontal.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_horizontal.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_horizontal.png" width="90" height="90">
+                </button>
+            </div>
+
+            <div id="col3">
+                <button class="rooms">
+                    <img src="assets/images/rooms_hall.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_vertical.png" width="90" height="90">
+                </button>
+                <button class="rooms">
+                    <img src="assets/images/rooms_billiardRoom.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_vertical.png" width="90" height="90">
+                </button>
+                <button class="rooms">
+                    <img src="assets/images/rooms_ballroom.png" width="90" height="90">
+                </button>
+            </div>
+
+            <div id="col4">
+                <button class="hallways">
+                    <img src="assets/images/hallway_horizontal.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_horizontal.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_horizontal.png" width="90" height="90">
+                </button>
+            </div> 
+
+            <div id="col5">
+                <button class="rooms">
+                    <img src="assets/images/rooms_lounge.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_vertical.png" width="90" height="90">
+                </button>
+                <button class="rooms">
+                    <img src="assets/images/rooms_diningRoom.png" width="90" height="90">
+                </button>
+                <button class="hallways">
+                    <img src="assets/images/hallway_vertical.png" width="90" height="90">
+                </button>
+                <button class="rooms">
+                    <img src="assets/images/rooms_kitchen.png" width="90" height="90">
+                </button>
+            </div>
+        </div>
+        <br><br><br>
+        <div class="action-container">
+            <button id="moveButton">Move</button>
+            <button id="suggestButton">Suggest</button>
+            <button id="disproveButton">Disprove</button>
+            <button id="accuseButton">Accuse</button>
+            <button id="endTurnButton">End Turn</button>
+        </div>
+    </div>
+    <div class="profile-container">
+        <h2>Player Profile:</h2>
+        <br>
+        <img src="assets/images/empty-character.webp" width="250" height="250">
+        <br>
+        <label id="turnLabel">It is Col. Mustard's turn.</label>
+        <br>
+        <label id="characterLabel">Your character is undetermined.</label>
+        <p>Card in hands:</p>
+        <ul id="cardList">
+            <li>Card 1</li>
+            <li>Card 2</li>
+            <li>Card 3</li>
+        </ul>
+    </div>
 </body>
 </html>

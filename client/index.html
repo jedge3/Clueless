@@ -9,19 +9,21 @@
     <link rel="icon" href="assets/images/logo.png" type="image/png">
 </head>
 <body>
-    <div id="chatContainer">
-        <div id="chat"></div>
-        <div id="chatMessageContainer" style="display: flex;">
-            <input type="text" id="chatMessage" placeholder="Enter chat message...">
-            <button id="chatSendMessage">Send</button>
+    <div id="lobby-container">
+        <div id="chatContainer">
+            <div id="chat"></div>
+            <div id="chatMessageContainer" style="display: flex;">
+                <input type="text" id="chatMessage" placeholder="Enter chat message...">
+                <button id="chatSendMessage">Send</button>
+            </div>
         </div>
-    </div>
-    <div class="lobby-button-container">
-        <button id="createButton">Create Lobby</button>
-        <input type="text" id="message" placeholder="Lobby id here...">
-        <button id="joinButton">Join Lobby</button>
-        <button id="leaveButton">Leave Lobby</button>
-        <button id="startButton">Start Game</button>
+        <input type="text" id="lobby-id" placeholder="Lobby id here...">
+        <div class="lobby-button-container">
+            <button id="createButton">Create Lobby</button>
+            <button id="joinButton">Join Lobby</button>
+            <button id="leaveButton">Leave Lobby</button>
+            <button id="startButton">Start Game</button>
+        </div>
     </div>
     <script type="module" src="js/main.js"></script>
 </body>

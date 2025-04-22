@@ -1,4 +1,7 @@
 body {
+    background-image: url('../assets/images/background.png');
+    background-repeat: repeat;
+    background-size: auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,13 +20,14 @@ body {
 
 .action-container {
     display: flex;
+    justify-content: center;
     gap: 25px;
 }
 
 .rooms-and-hallways{
     display: flex;
-    height: 450px;
-    width: 450px;
+    height: 750px;
+    width: 750px;
 }
 
 .rooms-and-hallways div {
@@ -34,7 +38,8 @@ body {
 }
 
 #col2, #col4 {
-    gap: 90px
+    gap: 150px;
+    width: 150px;
 }
 
 button.rooms, button.hallways {
@@ -47,13 +52,24 @@ button.rooms, button.hallways {
 
 button.rooms img, button.hallways img {
     display: block;
-    width: 90px;
-    height: 90px;
+    width: 144px;
+    height: 144px;
+    /* border: 3px solid rgb(60, 30, 15); */
+    border: 3px solid rgb(0, 0, 0);
 }
+
+#col1 button.hallways img, #col3 button.hallways img, #col5 button.hallways img {
+    width: 72px;
+}
+
+#col2 button.hallways img, #col4 button.hallways img {
+    transform: rotate(90deg);
+    width: 72px;
+}
+
 
 #infoButton {
     align-self: flex-end;
-    margin-right: 175px;
 }
 
 #chatContainer {
@@ -62,6 +78,7 @@ button.rooms img, button.hallways img {
     justify-content: center;
     width: 350px;
     margin-left: 10px;
+    background-color: white;
 }
 
 #chat {
@@ -89,5 +106,18 @@ button.rooms img, button.hallways img {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 40%
+    width: 20%
 }
+
+
+/* Test */
+
+/* div {
+    background-color: lightgreen;
+    opacity: 0.5;
+}
+
+.action-container {
+    background-color: black;
+    opacity: 0.5;
+} */

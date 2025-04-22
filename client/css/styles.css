@@ -24,53 +24,7 @@ body {
     gap: 25px;
 }
 
-.rooms-and-hallways{
-    display: flex;
-    height: 750px;
-    width: 750px;
-}
-
-.rooms-and-hallways div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-#col2, #col4 {
-    gap: 150px;
-    width: 150px;
-}
-
-button.rooms, button.hallways {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-}
-
-button.rooms img, button.hallways img {
-    display: block;
-    width: 144px;
-    height: 144px;
-    /* border: 3px solid rgb(60, 30, 15); */
-    border: 3px solid rgb(0, 0, 0);
-}
-
-#col1 button.hallways img, #col3 button.hallways img, #col5 button.hallways img {
-    width: 72px;
-}
-
-#col2 button.hallways img, #col4 button.hallways img {
-    transform: rotate(90deg);
-    width: 72px;
-}
-
-
-#infoButton {
-    align-self: flex-end;
-}
+/* Chat */
 
 #chatContainer {
     display: flex;
@@ -102,13 +56,109 @@ button.rooms img, button.hallways img {
     height: 20px;
 }
 
+/* Board */
+
+.rooms-and-hallways{
+    display: flex;
+    height: 750px;
+    width: 750px;
+}
+
+.rooms-and-hallways div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#col2, #col4 {
+    gap: 150px;
+    width: 150px;
+}
+
+button.rooms, button.hallways {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+}
+
+button.rooms img, button.hallways img {
+    display: block;
+    width: 144px;
+    height: 144px;
+    /* border: 3px solid rgb(60, 30, 15); */
+    border: 3px solid rgb(0, 0, 0);
+}
+
+#col1 button.hallways img, #col3 button.hallways img, #col5 button.hallways img {
+    width: 72px;
+}
+
+#col2 button.hallways img, #col4 button.hallways img {
+    transform: rotate(90deg);
+    width: 72px;
+}
+
+.image-label {
+    width:100px;
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgb(255, 255, 255);
+
+    text-shadow:
+        -2px -2px 0 black,
+        2px -2px 0 black,
+        -2px 2px 0 black,
+        2px 2px 0 black;
+
+    padding: 5px 10px;
+    font-size: 16px;
+    font-family: 'Press Start 2P', sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Action Buttons */
+
+#infoButton {
+    align-self: flex-end;
+}
+
+.action-container button {
+    font-family: 'Press Start 2P', sans-serif;
+    font-weight: bold;
+    background-color: #ff9900;
+    color: #333;
+    border: 4px solid #a16300;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 4px 4px 0px #3c2200;
+}
+
+.action-container button:hover {
+    background-color: #ffc568;
+}
+
+/* Player Profile */
+
 .profile-container {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 20%
+    border: 3px solid rgb(0, 0, 0);
+    padding-right: 40px;
+    padding-left: 40px;
+    background-color: white;
 }
-
 
 /* Test */
 

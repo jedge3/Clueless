@@ -31,7 +31,7 @@ export function endMoveAnimation() {
     moveAnimatingElements = []
 }
 
-function toggleAnimation() {
+export function toggleAnimation() {
     if (moveAnimatingElements.length == 0) {
         if (!boardObject.isOurTurn()) {
             return
@@ -41,5 +41,3 @@ function toggleAnimation() {
         endMoveAnimation();
     }
 }
-
-document.querySelector("#moveButton").addEventListener("click", toggleAnimation);

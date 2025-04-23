@@ -327,7 +327,6 @@ def game_connect():
 
 @socketio.on('requestReplication')
 def request_replication():
-    print("[Server Networking Subsystem] Game replication request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return

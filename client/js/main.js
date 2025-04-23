@@ -129,35 +129,35 @@ socket.on('replicate', function(data) {
         }
     }
 
-    // Update position label
-    // const positionLabel = document.getElementById("positionLabel")
-    // positionLabel.textContent = "You are in the " + boardObject.getPositionName(boardObject.getPlayingCharacter().position) + "."
-
-    // Update movable positions
+    // Update UI (target increment)
     let movablePositions = boardObject.getMovablePositions();
 
-    // const positionSelection = document.getElementById("selectPosition");
-    // positionSelection.options.length = 0;
-    // for (let position of movablePositions) {
-    //     let text = "";
-    //     let value = "";
-    //     if (position instanceof Room) {
-    //         if (position.name.split(" ")[2] == "Starting") {
-    //             continue
-    //         }
-    //         text = position.name;
-    //         value = "r," + position.name;
-    //     } else if (position instanceof Hallway) {
-    //         text = "Hallway between " + position.rooms[0].name + " and " + position.rooms[1].name;
-    //         value = "h," + position.rooms[0].name + "," + position.rooms[1].name;
-    //     }
-    //     const newOption = document.createElement("option");
-    //     newOption.text = text;
-    //     newOption.value = value;
-    //     positionSelection.appendChild(newOption);
-    // }
+    for (let i = 0; i < 6; i++) {
+        let character = boardObject.characters[i];
+        let characterDiv = document.getElementById(character.name);
+        let positionButton = null
+        if (character.position instanceof Room) {
+            for (let roomButton of document.getElementsByClassName("rooms")) {
+                if (roomButton.id == character.position.name) {
+                    positionButton = roomButton;
+                }
+            }
+        } else if (character.position instanceof Hallway) {
+            for (let hallwayButton of document.getElementsByClassName("hallways")) {
+                if (hallwayButton.id == character.position.rooms[0] + "," + character.position.rooms[1] || hallwayButton.id == character.position.rooms[1] + "," + character.position.rooms[0]) {
+                    positionButton = hallwayButton;
+                }
+            }
+        }
+        if (positionButton != null) {
+            for (let child of positionButton.children) {
+                if (child.className == "character-holder") {
+                    child.appendChild(characterDiv);
+                }
+            }
+        }
+    }
 
-    // Update UI (target increment)
 });
 
 function createLobby() {

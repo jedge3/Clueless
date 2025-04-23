@@ -1,7 +1,7 @@
 const socket = io("http://localhost:5000");
 export let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1].split(".")[0];  // Path to the HTML file
 import { boardObject, Board, CHARACTER_NAMES, Hallway, Room} from "./board.js";
-import { moveAnimatingElements, endMoveAnimation } from "./moveButton.js";
+import { moveAnimatingElements, endMoveAnimation, toggleAnimation } from "./moveButton.js";
 
 console.log("Started client!");
 
@@ -144,6 +144,7 @@ socket.on('replicate', function(data) {
             }
         } else if (character.position instanceof Hallway) {
             for (let hallwayButton of document.getElementsByClassName("hallways")) {
+                console.log(hallwayButton.id);
                 if (hallwayButton.id == character.position.rooms[0] + "," + character.position.rooms[1] || hallwayButton.id == character.position.rooms[1] + "," + character.position.rooms[0]) {
                     positionButton = hallwayButton;
                 }
@@ -189,12 +190,14 @@ function move(value) {
             if (position.name == value) {
                 value = "r," + value;
                 canEmit = true;
+                break
             }
         } else {
             if (position instanceof Hallway) {
                 if (position.rooms[0].name + "," + position.rooms[1].name == value || position.rooms[1].name + "," + position.rooms[0].name) {
                     value = "h," + value;
                     canEmit = true;
+                    break
                 }
             }
         }
@@ -245,6 +248,7 @@ if (fileName == "index") {
     socket.emit('lobby_connection')
 } else if (fileName == "game") {
     console.log("Game buttons connected.");
+    document.querySelector("#moveButton").addEventListener("click", toggleAnimation);
     document.querySelector("#suggestButton").addEventListener("click", suggest);
     document.querySelector("#accuseButton").addEventListener("click", accuse);
     document.querySelector("#disproveButton").addEventListener("click", reveal);

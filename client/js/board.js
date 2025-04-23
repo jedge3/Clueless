@@ -39,6 +39,7 @@ export class Board {
     constructor() {
         this.characterIndex = -1;
         this.knownCards = [];
+        this.turn = 0;
 
         this.rooms = {};
         for (let roomName of ROOM_NAMES) {
@@ -146,5 +147,9 @@ export class Board {
             console.log("Error: position is not a hallway or room.");
         }
         return movablePositions;
+    }
+
+    isOurTurn() {
+        return this.characterIndex == this.turn;
     }
 }

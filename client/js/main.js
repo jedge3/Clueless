@@ -1,8 +1,13 @@
 const socket = io("http://localhost:5000");
 export let boardObject = null;
 import { Board, CHARACTER_NAMES, Hallway, Room} from "./board.js";
+import { moveAnimatingElements, endMoveAnimation } from "./moveButton.js";
 
 console.log("Started client!");
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function setCookie(name, value, days) {
     let expires = '';
@@ -97,9 +102,10 @@ socket.on('replicate', function(data) {
         // }
     }
     
-    // Update turn label
+    // Update turn
+    boardObject.turn = data['turn'];
     const turnLabel = document.getElementById("turnLabel");
-    if (data['turn'] == boardObject.characterIndex) {
+    if (boardObject.isOurTurn()) {
         turnLabel.textContent = "It is your turn.";
     } else {
         turnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn.";
@@ -173,9 +179,10 @@ function startLobby() {
 }
 
 function move(value) {
-    if (boardObject == null) {
-        return
+    if (moveAnimatingElements.length == 0) {
+        return;
     }
+
     let canEmit = false;
     for (let position of boardObject.getMovablePositions()) {
         if (position instanceof Room) {
@@ -193,6 +200,7 @@ function move(value) {
         }
     }
     if (canEmit) {
+        endMoveAnimation();
         socket.emit('move', {position:value});
     }
 }
@@ -259,22 +267,15 @@ if (fileName.split(".")[0] == "index") {
             move(hallwayButton.id);
         })
     }
-    // while loop here
-    socket.emit('game_connection')
+
+    // Repeated Replication Requests
+    async function RRR() {
+        while (true) {
+            socket.emit('requestReplication');
+            await sleep(2000);
+        }
+    }
+    RRR();
+
+    socket.emit('game_connection');
 }
-
-// For testing
-
-// function sleep(ms) {
-//     return new Promise(resolve => setTimeout(resolve, ms));
-// }
-
-// async function test() {
-//     while (true) {
-//         const id = getCookie('socketId');
-//         console.log(id);
-//         await sleep(2000);
-//     }
-// }
-
-// test();

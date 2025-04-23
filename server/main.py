@@ -288,7 +288,24 @@ def end_turn():
         else:
             socketio.emit('message', "You are not currently in a game.")
 
+
+@socketio.on('lobby_connection')
+def lobby_connection():
+    print("[Server Networking Subsystem] Lobby connection request recieved.")
+    sender_id = session.get('id')
+    if sender_id is None:
+        return
+    lobby = Lobby.get_lobby_from_player(sender_id)
+    if lobby is not None:
+        board = lobby.get_board()
+        if board is not None:
+            time.sleep(0.1)
+            emit('redirect', {'name':'game'})
+        else:
+            for player_id in lobby.get_players():
+                emit('message', f'Player [{short(player_id)}] has joined the lobby.')
     
+
 @socketio.on('game_connection')
 def game_connect():
     print("[Server Networking Subsystem] Game connection request recieved.")
@@ -308,9 +325,9 @@ def game_connect():
             emit('message', "You are not currently in a game.")
 
 
-@socketio.on('lobby_connection')
-def lobby_connection():
-    print("[Server Networking Subsystem] Lobby connection request recieved.")
+@socketio.on('requestReplication')
+def request_replication():
+    print("[Server Networking Subsystem] Game replication request recieved.")
     sender_id = session.get('id')
     if sender_id is None:
         return
@@ -318,11 +335,7 @@ def lobby_connection():
     if lobby is not None:
         board = lobby.get_board()
         if board is not None:
-            time.sleep(0.1)
-            emit('redirect', {'name':'game'})
-        else:
-            for player_id in lobby.get_players():
-                emit('message', f'Player [{short(player_id)}] has joined the lobby.')
+            emit('replicate', board.get_replicate_data(sender_id))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-import { boardObject } from './main.js';
+import { boardObject } from './board.js';
 import { Hallway, Room } from './board.js';
 export let moveAnimatingElements = [];
 

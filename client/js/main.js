@@ -1,6 +1,6 @@
 const socket = io("http://localhost:5000");
-export let boardObject = null;
-import { Board, CHARACTER_NAMES, Hallway, Room} from "./board.js";
+export let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1].split(".")[0];  // Path to the HTML file
+import { boardObject, Board, CHARACTER_NAMES, Hallway, Room} from "./board.js";
 import { moveAnimatingElements, endMoveAnimation } from "./moveButton.js";
 
 console.log("Started client!");
@@ -236,24 +236,20 @@ function endTurn() {
     socket.emit('end_turn');
 }
 
-
-let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1];  // Path to the HTML file
-
-if (fileName.split(".")[0] == "index") {
+if (fileName == "index") {
     console.log("Lobby buttons connected.");
     document.querySelector("#createButton").addEventListener("click", createLobby);
     document.querySelector("#joinButton").addEventListener("click", joinLobby);
     document.querySelector("#leaveButton").addEventListener("click", leaveLobby);
     document.querySelector("#startButton").addEventListener("click", startLobby);
     socket.emit('lobby_connection')
-} else if (fileName.split(".")[0] == "game") {
+} else if (fileName == "game") {
     console.log("Game buttons connected.");
-    boardObject = new Board()
-    // document.querySelector("#moveButton").addEventListener("click", move);
     document.querySelector("#suggestButton").addEventListener("click", suggest);
     document.querySelector("#accuseButton").addEventListener("click", accuse);
     document.querySelector("#disproveButton").addEventListener("click", reveal);
     document.querySelector("#endTurnButton").addEventListener("click", endTurn);
+
 
     // Rooms and Hallways Click Functions
     for (let roomButton of document.getElementsByClassName("rooms")) {

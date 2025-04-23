@@ -153,3 +153,5 @@ export class Board {
         return this.characterIndex == this.turn;
     }
 }
+
+export let boardObject = new Board();

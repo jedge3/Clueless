@@ -100,7 +100,7 @@ body {
     width: 150px;
 }
 
-button.rooms, button.hallways {
+.rooms, .hallways {
     display: flex;
     justify-content: center;
     background: none;
@@ -177,15 +177,15 @@ button.rooms, button.hallways {
 
 /* Selection Animation */
 
-@keyframes fadeInOut {
+@keyframes brightnessAnimation {
     0% {
-        opacity: 1;
+        filter:brightness(1);
     }
     50% {
-        opacity: 0;
+        filter:brightness(2);
     }
     100% {
-        opacity: 1;
+        filter:brightness(1);
     }
 }
 

@@ -1,5 +1,5 @@
 const socket = io("http://localhost:5000");
-let boardObject = null;
+export let boardObject = null;
 import { Board, CHARACTER_NAMES, Hallway, Room} from "./board.js";
 
 console.log("Started client!");
@@ -81,18 +81,20 @@ socket.on('replicate', function(data) {
         boardObject.knownCards = data['cards'];
 
         // Update character label
-        const characterLabel = document.getElementById("characterLabel")
-        characterLabel.textContent = "Your character is " + CHARACTER_NAMES[boardObject.characterIndex] + "."
+        const characterLabel = document.getElementById("characterLabel");
+        characterLabel.textContent = "Your character is " + CHARACTER_NAMES[boardObject.characterIndex] + ".";
+        const characterImageLabel = document.getElementById("characterImageLabel");
+        characterImageLabel.src = document.getElementById(CHARACTER_NAMES[boardObject.characterIndex]).src;
 
         // Update card options
-        const clueSelection = document.getElementById("selectClue");
-        clueSelection.options.length = 0;
-        for (let card of boardObject.knownCards) {
-            const newOption = document.createElement("option");
-            newOption.text = card;
-            newOption.value = card;
-            clueSelection.appendChild(newOption);
-        }
+        // const clueSelection = document.getElementById("selectClue");
+        // clueSelection.options.length = 0;
+        // for (let card of boardObject.knownCards) {
+        //     const newOption = document.createElement("option");
+        //     newOption.text = card;
+        //     newOption.value = card;
+        //     clueSelection.appendChild(newOption);
+        // }
     }
     
     // Update turn label
@@ -122,49 +124,32 @@ socket.on('replicate', function(data) {
     }
 
     // Update position label
-    const positionLabel = document.getElementById("positionLabel")
-    positionLabel.textContent = "You are in the " + boardObject.getPositionName(boardObject.getPlayingCharacter().position) + "."
+    // const positionLabel = document.getElementById("positionLabel")
+    // positionLabel.textContent = "You are in the " + boardObject.getPositionName(boardObject.getPlayingCharacter().position) + "."
 
     // Update movable positions
-    let character = boardObject.getPlayingCharacter();
-    let position = character.position;
-    let movablePositions = [];
-    
-    if (position instanceof Room) {
-        for (let hallway of boardObject.getHallwaysAttachedToRoom(position)) {
-            if (!hallway.occupied) {
-                movablePositions.push(hallway);
-            }
-        }
-        if (position.passage != null) {
-            movablePositions.push(position.passage);
-        }
-    } else if (position instanceof Hallway) {
-        movablePositions = position.rooms;
-    } else {
-        console.log("Error: position is not a hallway or room.");
-    }
+    let movablePositions = boardObject.getMovablePositions();
 
-    const positionSelection = document.getElementById("selectPosition");
-    positionSelection.options.length = 0;
-    for (let position of movablePositions) {
-        let text = "";
-        let value = "";
-        if (position instanceof Room) {
-            if (position.name.split(" ")[2] == "Starting") {
-                continue
-            }
-            text = position.name;
-            value = "r," + position.name;
-        } else if (position instanceof Hallway) {
-            text = "Hallway between " + position.rooms[0].name + " and " + position.rooms[1].name;
-            value = "h," + position.rooms[0].name + "," + position.rooms[1].name;
-        }
-        const newOption = document.createElement("option");
-        newOption.text = text;
-        newOption.value = value;
-        positionSelection.appendChild(newOption);
-    }
+    // const positionSelection = document.getElementById("selectPosition");
+    // positionSelection.options.length = 0;
+    // for (let position of movablePositions) {
+    //     let text = "";
+    //     let value = "";
+    //     if (position instanceof Room) {
+    //         if (position.name.split(" ")[2] == "Starting") {
+    //             continue
+    //         }
+    //         text = position.name;
+    //         value = "r," + position.name;
+    //     } else if (position instanceof Hallway) {
+    //         text = "Hallway between " + position.rooms[0].name + " and " + position.rooms[1].name;
+    //         value = "h," + position.rooms[0].name + "," + position.rooms[1].name;
+    //     }
+    //     const newOption = document.createElement("option");
+    //     newOption.text = text;
+    //     newOption.value = value;
+    //     positionSelection.appendChild(newOption);
+    // }
 
     // Update UI (target increment)
 });
@@ -174,7 +159,7 @@ function createLobby() {
 }
 
 function joinLobby() {
-    const input = document.getElementById('message');
+    const input = document.getElementById('lobby-id');
     socket.emit('join lobby', {id:input.value});
     input.value = '';
 }
@@ -187,10 +172,29 @@ function startLobby() {
     socket.emit('start lobby', {});
 }
 
-function move() {
-    const input = document.getElementById('selectPosition');
-    console.log(input.value);
-    socket.emit('move', {position:input.value});
+function move(value) {
+    if (boardObject == null) {
+        return
+    }
+    let canEmit = false;
+    for (let position of boardObject.getMovablePositions()) {
+        if (position instanceof Room) {
+            if (position.name == value) {
+                value = "r," + value;
+                canEmit = true;
+            }
+        } else {
+            if (position instanceof Hallway) {
+                if (position.rooms[0].name + "," + position.rooms[1].name == value || position.rooms[1].name + "," + position.rooms[0].name) {
+                    value = "h," + value;
+                    canEmit = true;
+                }
+            }
+        }
+    }
+    if (canEmit) {
+        socket.emit('move', {position:value});
+    }
 }
 
 function suggest() {
@@ -237,11 +241,25 @@ if (fileName.split(".")[0] == "index") {
 } else if (fileName.split(".")[0] == "game") {
     console.log("Game buttons connected.");
     boardObject = new Board()
-    document.querySelector("#moveButton").addEventListener("click", move);
+    // document.querySelector("#moveButton").addEventListener("click", move);
     document.querySelector("#suggestButton").addEventListener("click", suggest);
     document.querySelector("#accuseButton").addEventListener("click", accuse);
     document.querySelector("#disproveButton").addEventListener("click", reveal);
     document.querySelector("#endTurnButton").addEventListener("click", endTurn);
+
+    // Rooms and Hallways Click Functions
+    for (let roomButton of document.getElementsByClassName("rooms")) {
+        roomButton.addEventListener("click", function() {
+            move(roomButton.id);
+        })
+    }
+
+    for (let hallwayButton of document.getElementsByClassName("hallways")) {
+        hallwayButton.addEventListener("click", function() {
+            move(hallwayButton.id);
+        })
+    }
+    // while loop here
     socket.emit('game_connection')
 }
 

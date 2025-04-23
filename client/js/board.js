@@ -122,4 +122,29 @@ export class Board {
             return "[undefined position]";
         }
     }
+
+    getMovablePositions() {
+        let character = this.getPlayingCharacter();
+        if (character == null) {
+            return [];
+        }
+        let position = character.position;
+        let movablePositions = [];
+        
+        if (position instanceof Room) {
+            for (let hallway of this.getHallwaysAttachedToRoom(position)) {
+                if (!hallway.occupied) {
+                    movablePositions.push(hallway);
+                }
+            }
+            if (position.passage != null) {
+                movablePositions.push(position.passage);
+            }
+        } else if (position instanceof Hallway) {
+            movablePositions = position.rooms;
+        } else {
+            console.log("Error: position is not a hallway or room.");
+        }
+        return movablePositions;
+    }
 }

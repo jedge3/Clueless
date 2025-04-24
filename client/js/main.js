@@ -60,8 +60,6 @@ socket.on('message', function(msg) {
     sendChatMessage("[Server]: " + msg);
 });
 
-// data['characterIndex']: index of the player's character
-// data['cards']: list of the cards we have
 socket.on('redirect', function(data) {
     if (data['name'] == 'game'){
         window.location.href = 'game.html';
@@ -130,8 +128,6 @@ socket.on('replicate', function(data) {
     }
 
     // Update UI (target increment)
-    let movablePositions = boardObject.getMovablePositions();
-
     for (let i = 0; i < 6; i++) {
         let character = boardObject.characters[i];
         let characterDiv = document.getElementById(character.name);
@@ -144,8 +140,7 @@ socket.on('replicate', function(data) {
             }
         } else if (character.position instanceof Hallway) {
             for (let hallwayButton of document.getElementsByClassName("hallways")) {
-                console.log(hallwayButton.id);
-                if (hallwayButton.id == character.position.rooms[0] + "," + character.position.rooms[1] || hallwayButton.id == character.position.rooms[1] + "," + character.position.rooms[0]) {
+                if (hallwayButton.id == character.position.rooms[0].name + "," + character.position.rooms[1].name || hallwayButton.id == character.position.rooms[1].name + "," + character.position.rooms[0].name) {
                     positionButton = hallwayButton;
                 }
             }

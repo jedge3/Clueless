@@ -140,7 +140,7 @@ def move(data):
                 success = board.move(data)
                 if success:
                     print("replicating game state")
-                    socketio.emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                    socketio.emit('replicate', board.get_replicate_data(sender_id))
                 else:
                     emit('message', "An error occured.")
             else:
@@ -173,8 +173,6 @@ def suggest(data):
                     character = data['character']
                     board.suggester = request.sid
                     emit('message', f'{player_character.name} suggests {room}, {weapon}, {character}.', room=lobby.get_id())
-                    time.sleep(1)
-                    socketio.emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                 else:
                     emit('message', "Invalid suggestion.")
             else:
@@ -203,7 +201,6 @@ def accuse(data):
                 if success == True:
                     emit('message', f"{character.name} has successfully accused the murderer. Game over.", room=lobby.get_id())
                     emit('message', "Correct accusation. You have won!")
-                    emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                     lobby.end_game()
                     time.sleep(5)
 
@@ -212,14 +209,12 @@ def accuse(data):
                     if board.game_over:
                         emit('message', "Incorrect accusation. You have been eliminated.")
                         emit('message', f"{character.name} has been eliminated by a false accusation. All players have been eliminated. Game over.", room=lobby.get_id())
-                        emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                         lobby.end_game()
                         time.sleep(5)
                         emit('redirect', {'name':'lobby'}, room=lobby.get_id())
                     else:
                         emit('message', "Incorrect accusation. You have been eliminated.")
                         emit('message', f"{character.name} has been eliminated by a false accusation.", room=lobby.get_id())
-                        emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                 else:
                     emit('message', "Cannot accuse at this time.")
             else:
@@ -249,7 +244,6 @@ def disprove(data):
                     if success:
                         emit('message', f"{character.name} was able to disprove the suggestion.", room=lobby.get_id())
                         socketio.emit('message', f'You have recieved the card {data['card']}.', to=board.suggester)
-                        emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
                     else:
                         if board.suggesting:
                             emit('message', f"{character.name} was unable to disprove the suggestion.", room=lobby.get_id())
@@ -280,7 +274,7 @@ def end_turn():
                 character = board.get_character_from_playerid(sender_id)
                 if success:
                     emit('message', f'Player {character.name} has ended their turn.', room=lobby.get_id())
-                    socketio.emit('replicate', board.get_replicate_data(None), room=lobby.get_id())
+                    socketio.emit('replicate', board.get_replicate_data(sender_id))
                 else:
                     emit('message', "Unable to end your turn at this moment.")
             else:

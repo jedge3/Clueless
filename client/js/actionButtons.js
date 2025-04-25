@@ -41,3 +41,30 @@ export function toggleAnimation() {
         endMoveAnimation();
     }
 }
+
+export function openSuggestionPopup() {
+    console.log("Opening suggestion popup.");
+    if (document.getElementById("suggestion-popup").style.display == "block") {
+        document.getElementById("suggestion-popup").style.display = "none";
+    } else {
+        document.getElementById("suggestion-popup").style.display = "block";
+    }
+}
+
+export function openAccusationPopup() { 
+    console.log("Opening accusation popup.");
+    if (document.getElementById("accusation-popup").style.display == "block") {
+        document.getElementById("accusation-popup").style.display = "none";
+    } else {
+        document.getElementById("accusation-popup").style.display = "block";
+    }
+}
+
+export function openDisproofPopup() {
+    console.log("Opening disproof popup.");
+    if (document.getElementById("disproof-popup").style.display == "block") {
+        document.getElementById("disproof-popup").style.display = "none";
+    } else {
+        document.getElementById("disproof-popup").style.display = "block";
+    }
+}

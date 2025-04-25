@@ -25,7 +25,6 @@ export class Hallway {
         this.rooms = [room1, room2];
         room2.hallways.push(this);
         room1.hallways.push(this);
-        this.occupied = false
     }
 
     addRoom(room) {
@@ -134,7 +133,14 @@ export class Board {
         
         if (position instanceof Room) {
             for (let hallway of this.getHallwaysAttachedToRoom(position)) {
-                if (!hallway.occupied) {
+                let occupied = false;
+                for (let char in this.characters) {
+                    if (char.position == hallway) {
+                        occupied = true;
+                        break;
+                    }
+                }
+                if (!occupied) {
                     movablePositions.push(hallway);
                 }
             }

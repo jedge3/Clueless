@@ -1,7 +1,7 @@
 const socket = io("http://localhost:5000");
 export let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1].split(".")[0];  // Path to the HTML file
-import { boardObject, Board, CHARACTER_NAMES, Hallway, Room} from "./board.js";
-import { moveAnimatingElements, endMoveAnimation, toggleAnimation } from "./moveButton.js";
+import { boardObject, CHARACTER_NAMES, Hallway, Room} from "./board.js";
+import { moveAnimatingElements, endMoveAnimation, toggleAnimation, openSuggestionPopup, openAccusationPopup, openDisproofPopup } from "./actionButtons.js";
 
 console.log("Started client!");
 
@@ -231,6 +231,7 @@ function reveal() {
 }
 
 function endTurn() {
+    endMoveAnimation();
     socket.emit('end_turn');
 }
 
@@ -244,9 +245,9 @@ if (fileName == "index") {
 } else if (fileName == "game") {
     console.log("Game buttons connected.");
     document.querySelector("#moveButton").addEventListener("click", toggleAnimation);
-    document.querySelector("#suggestButton").addEventListener("click", suggest);
-    document.querySelector("#accuseButton").addEventListener("click", accuse);
-    document.querySelector("#disproveButton").addEventListener("click", reveal);
+    document.querySelector("#suggestButton").addEventListener("click", openSuggestionPopup);
+    document.querySelector("#accuseButton").addEventListener("click", openAccusationPopup);
+    document.querySelector("#disproveButton").addEventListener("click", openDisproofPopup);
     document.querySelector("#endTurnButton").addEventListener("click", endTurn);
 
 

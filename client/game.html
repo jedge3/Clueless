@@ -145,20 +145,25 @@
             <button id="infoButton">i</button>
         </div>
     </div>
-    <div class="profile-container">
-        <h2>Player Profile:</h2>
+    <div id="right-side-ui">
+        <div class="profile-container">
+            <h2>Player Profile:</h2>
+            <br>
+            <img id="characterImageLabel" src="assets/images/characters/empty.png" width="250" height="250">
+            <br>
+            <label id="characterLabel">Your character is undetermined.</label>
+            <br>
+            <label id="turnLabel">It is Col. Mustard's turn.</label>
+        </div>
         <br>
-        <img id="characterImageLabel" src="assets/images/characters/empty.png" width="250" height="250">
-        <br>
-        <label id="characterLabel">Your character is undetermined.</label>
-        <br>
-        <label id="turnLabel">It is Col. Mustard's turn.</label>
+        <div class="card-holder" id="card-holder" value="true">
+
+        </div>
     </div>
     <div class="popup" id="accusation-popup"> </div>
     <div class="popup" id="suggestion-popup"> </div>
     <div class="popup" id="disproof-popup"> </div>
 
     <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/actionButtons.js"></script>
 </body>
 </html>

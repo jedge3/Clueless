@@ -2,6 +2,8 @@ const socket = io("http://localhost:5000");
 export let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1].split(".")[0];  // Path to the HTML file
 import { boardObject, CHARACTER_NAMES, Hallway, Room} from "./board.js";
 import { moveAnimatingElements, endMoveAnimation, toggleAnimation, openSuggestionPopup, openAccusationPopup, openDisproofPopup } from "./actionButtons.js";
+import { newCard } from "./card.js";
+let cards_loaded = false;
 
 console.log("Started client!");
 
@@ -88,16 +90,16 @@ socket.on('replicate', function(data) {
         characterLabel.textContent = "Your character is " + CHARACTER_NAMES[boardObject.characterIndex] + ".";
         const characterImageLabel = document.getElementById("characterImageLabel");
         characterImageLabel.src = document.getElementById(CHARACTER_NAMES[boardObject.characterIndex]).src;
-
-        // Update card options
-        // const clueSelection = document.getElementById("selectClue");
-        // clueSelection.options.length = 0;
-        // for (let card of boardObject.knownCards) {
-        //     const newOption = document.createElement("option");
-        //     newOption.text = card;
-        //     newOption.value = card;
-        //     clueSelection.appendChild(newOption);
-        // }
+        
+        const card_holder = document.getElementById("card-holder");
+        if (!cards_loaded) {
+            cards_loaded = true;
+            console.log("Htest")
+            for (let cardName of boardObject.knownCards) {
+                const card = newCard(cardName);
+                card_holder.appendChild(card);
+            }
+        }
     }
     
     // Update turn

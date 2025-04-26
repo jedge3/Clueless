@@ -34,6 +34,14 @@ body {
     gap: 25px;
 }
 
+#right-side-ui {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-right: 50px;
+}
+
 /* Chat */
 
 #chatContainer {
@@ -41,6 +49,7 @@ body {
     flex-direction: column;
     justify-content: center;
     width: 350px;
+    padding-left: 50px;
 }
 
 #chat {
@@ -204,7 +213,7 @@ body {
     align-self: flex-end;
 }
 
-.action-container button, .lobby-button-container button, #chatMessage, #chatSendMessage, #lobby-id, #chat, #starting-character-holder, .profile-container, .popup {
+.action-container button, .lobby-button-container button, #chatMessage, #chatSendMessage, #lobby-id, #chat, #starting-character-holder, .profile-container, .popup, .card-holder {
     font-family: 'Press Start 2P', sans-serif;
     font-weight: bold;
     background-color: #ff9900;
@@ -232,10 +241,55 @@ body {
 .profile-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding-left: 15px;
-    padding-right: 40px;
+    align-items: center;
+    width:450px;
+    height:450px;
 }
+
+.card-holder {
+    display:flex;
+    width:692px;
+    height:436px;
+    flex-wrap: wrap;
+    gap:3px;
+}
+
+.card {
+    width:136px;
+    height:216px;
+    background-image:url('../assets/images/card.png');
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0);
+    border:none;
+    cursor: pointer;
+}
+
+.card .container {
+    position:relative;
+    width:110%;
+    height:100%;
+    transform: translate(-4%, 50%);
+}
+
+.card #icon {
+    position:absolute;
+    width:59%;
+    height:37%;
+    transform:translate(-50%, -100%);
+}
+
+.card #name {
+    position:absolute;
+    width:100%;
+    height:10%;
+    transform: translate(0%, 190%);
+    font-family: 'Press Start 2P', sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+
 
 /* Popups */
 

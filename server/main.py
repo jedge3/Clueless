@@ -317,6 +317,7 @@ def game_connect():
             emit('replicate', board.get_replicate_data(sender_id))
         else:
             emit('message', "You are not currently in a game.")
+            emit('redirect', {'name':'lobby'})
 
 
 @socketio.on('requestReplication')

@@ -43,28 +43,43 @@ export function toggleAnimation() {
 }
 
 export function openSuggestionPopup() {
-    console.log("Opening suggestion popup.");
-    if (document.getElementById("suggestion-popup").style.display == "block") {
+    if (document.getElementById("suggestion-popup").style.display == "flex") {
         document.getElementById("suggestion-popup").style.display = "none";
     } else {
-        document.getElementById("suggestion-popup").style.display = "block";
+        document.getElementById("accusation-popup").style.display = "none";
+        document.getElementById("disproof-popup").style.display = "none";
+        document.getElementById("suggestion-popup").style.display = "flex";
     }
 }
 
 export function openAccusationPopup() { 
-    console.log("Opening accusation popup.");
-    if (document.getElementById("accusation-popup").style.display == "block") {
+    if (document.getElementById("accusation-popup").style.display == "flex") {
         document.getElementById("accusation-popup").style.display = "none";
     } else {
-        document.getElementById("accusation-popup").style.display = "block";
+        document.getElementById("suggestion-popup").style.display = "none";
+        document.getElementById("disproof-popup").style.display = "none";
+        document.getElementById("accusation-popup").style.display = "flex";
     }
 }
 
 export function openDisproofPopup() {
-    console.log("Opening disproof popup.");
-    if (document.getElementById("disproof-popup").style.display == "block") {
+    if (document.getElementById("disproof-popup").style.display == "flex") {
         document.getElementById("disproof-popup").style.display = "none";
     } else {
-        document.getElementById("disproof-popup").style.display = "block";
+        document.getElementById("suggestion-popup").style.display = "none";
+        document.getElementById("accusation-popup").style.display = "none";
+        document.getElementById("disproof-popup").style.display = "flex";
+    }
+}
+
+function closeAllPopups() {
+    document.getElementById("suggestion-popup").style.display = "none";
+    document.getElementById("accusation-popup").style.display = "none";
+    document.getElementById("disproof-popup").style.display = "none";
+}
+
+if (document.getElementsByClassName("close-button").length > 0) {
+    for (let button of document.getElementsByClassName("close-button")) {
+        button.addEventListener("click", closeAllPopups);
     }
 }

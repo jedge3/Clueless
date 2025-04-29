@@ -213,7 +213,7 @@ body {
     align-self: flex-end;
 }
 
-.action-container button, .lobby-button-container button, #chatMessage, #chatSendMessage, #lobby-id, #chat, #starting-character-holder, .profile-container, .popup, .card-holder {
+.action-container button, .lobby-button-container button, #chatMessage, #chatSendMessage, #lobby-id, #chat, #starting-character-holder, .profile-container, .card-holder, .popup, .popup .submit-button, .character-card-holder, .room-card-holder, .weapon-card-holder, .suggestion-card-holder {
     font-family: 'Press Start 2P', sans-serif;
     font-weight: bold;
     background-color: #ff9900;
@@ -223,7 +223,7 @@ body {
     box-shadow: 4px 4px 0px #3c2200;
 }
 
-.action-container button, .lobby-button-container button, #chatSendMessage {
+.action-container button, .lobby-button-container button, #chatSendMessage, .popup.title, .popup .submit-button {
     text-transform: uppercase;
     cursor: pointer;
 }
@@ -289,15 +289,50 @@ body {
     text-transform: uppercase;
 }
 
-
-
 /* Popups */
 
 .popup {
     position:fixed;
-    width:40%;
-    height:60%;
+    width:60%;
+    height:90%;
     display:none;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap:5px;
+}
+
+.character-card-holder, .room-card-holder, .weapon-card-holder, .suggestion-card-holder {
+    width:90%;
+    height:216px;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.popup .submit-button {
+    width:60%;
+    height:10%;
+}
+
+.popup .close-button {
+    background-color: red;
+    position:absolute;
+    width:40px;
+    height:40px;
+    top:0;
+    right:0;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid darkred;
+    color:wheat;
+}
+
+.popup .close-button:hover {
+    background-color: lightcoral;
+    color:black;
+    cursor: pointer;
 }
 
 /* Test */

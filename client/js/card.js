@@ -31,5 +31,24 @@ export function newCard(name) {
     return button;
 }
 
-// document.getElementById("card-holder").appendChild(newCard("Col. Mustard"));
-// document.getElementById("card-holder").appendChild(newCard("Library"));
+// Load cards into popups.
+for (let characterCardHolder of document.getElementsByClassName("character-card-holder")) {
+    for (let characterName of CHARACTER_NAMES) {
+        const card = newCard(characterName);
+        characterCardHolder.appendChild(card);
+    }
+}
+
+for (let roomCardHolder of document.getElementsByClassName("room-card-holder")) {
+    for (let roomName of ROOM_NAMES) {
+        const card = newCard(roomName);
+        roomCardHolder.appendChild(card);
+    }
+}
+
+for (let weaponCardHolder of document.getElementsByClassName("weapon-card-holder")) {
+    for (let weaponName of WEAPON_NAMES) {
+        const card = newCard(weaponName);
+        weaponCardHolder.appendChild(card);
+    }
+}

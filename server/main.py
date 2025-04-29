@@ -201,16 +201,17 @@ def accuse(data):
                 if success == True:
                     emit('message', f"{character.name} has successfully accused the murderer. Game over.", room=lobby.get_id())
                     emit('message', "Correct accusation. You have won!")
-                    lobby.end_game()
                     time.sleep(5)
 
+                    lobby.end_game()
                     emit('redirect', {'name':'lobby'}, room=lobby.get_id())
                 elif success == False:
                     if board.game_over:
                         emit('message', "Incorrect accusation. You have been eliminated.")
                         emit('message', f"{character.name} has been eliminated by a false accusation. All players have been eliminated. Game over.", room=lobby.get_id())
-                        lobby.end_game()
                         time.sleep(5)
+
+                        lobby.end_game()
                         emit('redirect', {'name':'lobby'}, room=lobby.get_id())
                     else:
                         emit('message', "Incorrect accusation. You have been eliminated.")
@@ -330,6 +331,8 @@ def request_replication():
         board = lobby.get_board()
         if board is not None:
             emit('replicate', board.get_replicate_data(sender_id))
+        else:
+            emit('redirect', {'name':'lobby'})
 
 
 if __name__ == "__main__":

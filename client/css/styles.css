@@ -184,7 +184,7 @@ body {
     width: 40px;
 }
 
-/* Selection Animation */
+/* Selection Animations */
 
 @keyframes brightnessAnimation {
     0% {
@@ -195,6 +195,18 @@ body {
     }
     100% {
         filter:brightness(1);
+    }
+}
+
+@keyframes brightnessAnimation2 {
+    0% {
+        filter:brightness(1.6);
+    }
+    50% {
+        filter:brightness(2);
+    }
+    100% {
+        filter:brightness(1.6);
     }
 }
 

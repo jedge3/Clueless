@@ -1,5 +1,6 @@
 import { boardObject } from './board.js';
 import { Hallway, Room } from './board.js';
+import { removeCardSelection } from './card.js';
 export let moveAnimatingElements = [];
 
 function startMoveAnimation() {
@@ -31,7 +32,7 @@ export function endMoveAnimation() {
     moveAnimatingElements = []
 }
 
-export function toggleAnimation() {
+function toggleAnimation() {
     if (moveAnimatingElements.length == 0) {
         if (!boardObject.isOurTurn()) {
             return
@@ -42,32 +43,32 @@ export function toggleAnimation() {
     }
 }
 
-export function openSuggestionPopup() {
+function openSuggestionPopup() {
+    removeCardSelection();
     if (document.getElementById("suggestion-popup").style.display == "flex") {
-        document.getElementById("suggestion-popup").style.display = "none";
+        closeAllPopups()
     } else {
-        document.getElementById("accusation-popup").style.display = "none";
-        document.getElementById("disproof-popup").style.display = "none";
+        closeAllPopups()
         document.getElementById("suggestion-popup").style.display = "flex";
     }
 }
 
-export function openAccusationPopup() { 
+function openAccusationPopup() { 
+    removeCardSelection();
     if (document.getElementById("accusation-popup").style.display == "flex") {
-        document.getElementById("accusation-popup").style.display = "none";
+        closeAllPopups()
     } else {
-        document.getElementById("suggestion-popup").style.display = "none";
-        document.getElementById("disproof-popup").style.display = "none";
+        closeAllPopups()
         document.getElementById("accusation-popup").style.display = "flex";
     }
 }
 
-export function openDisproofPopup() {
+function openDisproofPopup() {
+    removeCardSelection();
     if (document.getElementById("disproof-popup").style.display == "flex") {
-        document.getElementById("disproof-popup").style.display = "none";
+        closeAllPopups()
     } else {
-        document.getElementById("suggestion-popup").style.display = "none";
-        document.getElementById("accusation-popup").style.display = "none";
+        closeAllPopups()
         document.getElementById("disproof-popup").style.display = "flex";
     }
 }
@@ -78,8 +79,17 @@ function closeAllPopups() {
     document.getElementById("disproof-popup").style.display = "none";
 }
 
-if (document.getElementsByClassName("close-button").length > 0) {
+if (document.title == "Clue-less - Game") {
+    document.querySelector("#moveButton").addEventListener("click", toggleAnimation);
+    document.querySelector("#suggestButton").addEventListener("click", openSuggestionPopup);
+    document.querySelector("#accuseButton").addEventListener("click", openAccusationPopup);
+    document.querySelector("#disproveButton").addEventListener("click", openDisproofPopup);
     for (let button of document.getElementsByClassName("close-button")) {
         button.addEventListener("click", closeAllPopups);
+    }
+    for (let submitButton of document.getElementsByClassName("submit-button")) {
+        submitButton.addEventListener("click", function() {
+            closeAllPopups();
+        })
     }
 }

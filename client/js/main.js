@@ -1,8 +1,8 @@
 const socket = io("http://localhost:5000");
 export let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1].split(".")[0];  // Path to the HTML file
 import { boardObject, CHARACTER_NAMES, Hallway, Room} from "./board.js";
-import { moveAnimatingElements, endMoveAnimation, toggleAnimation, openSuggestionPopup, openAccusationPopup, openDisproofPopup } from "./actionButtons.js";
-import { newCard } from "./card.js";
+import { moveAnimatingElements, endMoveAnimation } from "./actionButtons.js";
+import { newCard, characterSelection, roomSelection, weaponSelection } from "./card.js";
 let cards_loaded = false;
 
 console.log("Started client!");
@@ -205,28 +205,6 @@ function move(value) {
     }
 }
 
-function suggest() {
-    const characterSelection = document.getElementById('selectCharacter');
-    const weaponSelection = document.getElementById('selectWeapon');
-    
-    socket.emit('suggest', {
-        weapon:weaponSelection.value,
-        character:characterSelection.value
-    });
-}
-
-function accuse() {
-    const characterSelection = document.getElementById('selectCharacter');
-    const weaponSelection = document.getElementById('selectWeapon');
-    const roomSelection = document.getElementById('selectRoom');
-    
-    socket.emit('accuse', {
-        weapon:weaponSelection.value, 
-        character:characterSelection.value,
-        room:roomSelection.value
-    });
-}
-
 function reveal() {
     const cardElement = document.getElementById('selectClue');
     socket.emit('disprove', {card:cardElement.value});
@@ -237,23 +215,18 @@ function endTurn() {
     socket.emit('end_turn');
 }
 
-if (fileName == "index") {
+if (document.title == "Clue-less - Lobby") {
     console.log("Lobby buttons connected.");
     document.querySelector("#createButton").addEventListener("click", createLobby);
     document.querySelector("#joinButton").addEventListener("click", joinLobby);
     document.querySelector("#leaveButton").addEventListener("click", leaveLobby);
     document.querySelector("#startButton").addEventListener("click", startLobby);
     socket.emit('lobby_connection')
-} else if (fileName == "game") {
+} else if (document.title == "Clue-less - Game") {
     console.log("Game buttons connected.");
-    document.querySelector("#moveButton").addEventListener("click", toggleAnimation);
-    document.querySelector("#suggestButton").addEventListener("click", openSuggestionPopup);
-    document.querySelector("#accuseButton").addEventListener("click", openAccusationPopup);
-    document.querySelector("#disproveButton").addEventListener("click", openDisproofPopup);
     document.querySelector("#endTurnButton").addEventListener("click", endTurn);
 
-
-    // Rooms and Hallways Click Functions
+    // Moving
     for (let roomButton of document.getElementsByClassName("rooms")) {
         roomButton.addEventListener("click", function() {
             move(roomButton.id);
@@ -263,6 +236,37 @@ if (fileName == "index") {
     for (let hallwayButton of document.getElementsByClassName("hallways")) {
         hallwayButton.addEventListener("click", function() {
             move(hallwayButton.id);
+        })
+    }
+
+    // Suggestion, Disproof, Accusation
+    for (let submitButton of document.getElementsByClassName("submit-button")) {
+        submitButton.addEventListener("click", function() {
+            const parent = submitButton.parentNode;
+            if (parent.id == "suggestion-popup") {
+                if (characterSelection != null && weaponSelection != null) {
+                    socket.emit('suggest', {
+                        weapon:weaponSelection,
+                        character:characterSelection
+                    });
+                } else {
+                    sendChatMessage("Error: Character or Weapon is null.")
+                }
+            } else if (parent.id == "accusation-popup") {
+                if (characterSelection != null && roomSelection != null && weaponSelection != null) {
+                    socket.emit('accuse', {
+                        character:characterSelection,
+                        room:roomSelection,
+                        weapon:weaponSelection
+                    });
+                } else {
+                    sendChatMessage("Error: Character, Room, or Weapon is null.")
+                }
+            } else if (parent.id == "disproof-popup") {
+
+            } else {
+                console.log("ERROR: Submit button not a member of a valid popup.")
+            }
         })
     }
 

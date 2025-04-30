@@ -3,7 +3,6 @@ export let fileName = document.location.pathname.split("/")[document.location.pa
 import { boardObject, CHARACTER_NAMES, Hallway, Room} from "./board.js";
 import { moveAnimatingElements, endMoveAnimation } from "./actionButtons.js";
 import { newCard, characterSelection, roomSelection, weaponSelection, handleSelect } from "./card.js";
-let cards_loaded = false;
 
 console.log("Started client!");
 
@@ -91,14 +90,26 @@ socket.on('replicate', function(data) {
         const characterImageLabel = document.getElementById("characterImageLabel");
         characterImageLabel.src = document.getElementById(CHARACTER_NAMES[boardObject.characterIndex]).src;
         
+        // Update character's cards
         const cardHolder = document.getElementById("card-holder");
-        if (!cards_loaded) {
-            cards_loaded = true;
-            console.log("Htest")
+        if (cardHolder.value != data['cards'].length + data['obtainedCards'].length) {
+            cardHolder.value = data['cards'].length + data['obtainedCards'].length;
+            cardHolder.innerHTML = "";
+
+            // Dealt cards
             for (let cardName of boardObject.knownCards) {
                 const card = newCard(cardName);
                 cardHolder.appendChild(card);
             }
+
+            // Obtained cards
+            for (let cardName of data['obtainedCards']) {
+                const card = newCard(cardName);
+                cardHolder.appendChild(card);
+                card.style.filter = "brightness(0.5)";
+                card.style.opacity = 0.8;
+            }
+
         }
     }
     
@@ -157,7 +168,6 @@ socket.on('replicate', function(data) {
         }
     }
 
-    // Update UI (target increment)
     for (let i = 0; i < 6; i++) {
         let character = boardObject.characters[i];
         let characterDiv = document.getElementById(character.name);

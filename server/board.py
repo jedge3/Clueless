@@ -10,6 +10,7 @@ class Character():
         self.name = name
         self.position = position
         self.cards = []
+        self.obtained_cards = []
 
     
     def move_to(self, position):
@@ -289,6 +290,7 @@ class Board():
     def disprove(self, data):
         if data['card'] in [self.suggested_room, self.suggested_weapon, self.suggested_character]:
             self.suggesting = False
+            self.characters[self.turn].obtained_cards.append(data['card'])
             return True
         else:
             self.disproof_turn = (self.disproof_turn + 1) % len(self.player_list)
@@ -309,6 +311,7 @@ class Board():
         data['suggesting'] = self.suggesting
         data['suggestionCards'] = [self.suggested_character, self.suggested_room, self.suggested_weapon]
         data['disproofTurn'] = self.disproof_turn
+
         for i, character in enumerate(self.characters):
             if isinstance(character.position, Room):
                 data['isRoom'][i] = True
@@ -320,9 +323,8 @@ class Board():
         if player_id is not None:
             character = self.get_character_from_playerid(player_id)
             data['characterIndex'] = self.player_list.index(player_id)
-            data['cards'] = []
-            for card in character.cards:
-                data['cards'].append(card)
+            data['cards'] = character.cards
+            data['obtainedCards'] = character.obtained_cards
 
         # send game state data to the client
         return data

@@ -58,18 +58,16 @@ body {
     overflow-y: scroll;
 }
 
-#chat::-webkit-scrollbar {
+#chat::-webkit-scrollbar, #card-holder::-webkit-scrollbar-thumb {
     width: 12px;
 }
 
-/* Scrollbar thumb (the draggable part) */
-#chat::-webkit-scrollbar-thumb {
-    background-color: #ffca79; /* Change this to any color */
+#chat::-webkit-scrollbar-thumb, #card-holder::-webkit-scrollbar-thumb {
+    background-color: #ffca79;
     border-radius: 5px;
 }
 
-/* Scrollbar track */
-#chat::-webkit-scrollbar-track {
+#chat::-webkit-scrollbar-track, #card-holder::-webkit-scrollbar-thumb {
     background-color: #a16300;
 }
 
@@ -260,10 +258,11 @@ body {
 
 .card-holder {
     display:flex;
-    width:692px;
+    width:710px;
     height:436px;
     flex-wrap: wrap;
     gap:3px;
+    overflow-y: scroll;
 }
 
 .card {

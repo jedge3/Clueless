@@ -2,7 +2,7 @@ const socket = io("http://localhost:5000");
 export let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1].split(".")[0];  // Path to the HTML file
 import { boardObject, CHARACTER_NAMES, Hallway, Room} from "./board.js";
 import { moveAnimatingElements, endMoveAnimation } from "./actionButtons.js";
-import { newCard, characterSelection, roomSelection, weaponSelection } from "./card.js";
+import { newCard, characterSelection, roomSelection, weaponSelection, handleSelect } from "./card.js";
 let cards_loaded = false;
 
 console.log("Started client!");
@@ -63,9 +63,9 @@ socket.on('message', function(msg) {
 });
 
 socket.on('redirect', function(data) {
-    if (data['name'] == 'game'){
+    if (data['name'] == 'game' && document.title == "Clue-less - Lobby"){
         window.location.href = 'game.html';
-    }else if (data['name'] == 'index' || data['name'] == 'lobby') {
+    }else if ((data['name'] == 'index' || data['name'] == 'lobby') && document.title == "Clue-less - Game") {
         window.location.href = 'index.html';
     }
 });
@@ -91,13 +91,13 @@ socket.on('replicate', function(data) {
         const characterImageLabel = document.getElementById("characterImageLabel");
         characterImageLabel.src = document.getElementById(CHARACTER_NAMES[boardObject.characterIndex]).src;
         
-        const card_holder = document.getElementById("card-holder");
+        const cardHolder = document.getElementById("card-holder");
         if (!cards_loaded) {
             cards_loaded = true;
             console.log("Htest")
             for (let cardName of boardObject.knownCards) {
                 const card = newCard(cardName);
-                card_holder.appendChild(card);
+                cardHolder.appendChild(card);
             }
         }
     }
@@ -109,6 +109,34 @@ socket.on('replicate', function(data) {
         turnLabel.textContent = "It is your turn.";
     } else {
         turnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn.";
+    }
+
+    // Update disproof turn
+    boardObject.disproofTurn = data['disproofTurn'];
+    const disproofTurnLabel = document.getElementById("disproofTurnLabel");
+    if (!data["suggesting"]) {
+        disproofTurnLabel.textContent = "It is noone's turn to disprove."
+    } else if (boardObject.isOurTurnDisproof()) {
+        disproofTurnLabel.textContent = "It is your turn to disprove.";
+    } else {
+        disproofTurnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn to disprove.";
+    }
+
+    // Update disproof popup cards
+    const cardHolder = document.getElementById("suggestion-card-holder");
+    if (!data["suggesting"]) {
+        cardHolder.innerHTML = "";
+    } else {
+        if (cardHolder.innerHTML == "") {
+            for (let cardName of data['suggestionCards']) {
+                const card = newCard(cardName);
+                cardHolder.appendChild(card);
+                handleSelect(card);
+            }
+            const noCard = newCard("None");
+            cardHolder.appendChild(noCard);
+            handleSelect(noCard);
+        }
     }
 
     // Update character positions
@@ -187,14 +215,14 @@ function move(value) {
             if (position.name == value) {
                 value = "r," + value;
                 canEmit = true;
-                break
+                break;
             }
         } else {
             if (position instanceof Hallway) {
                 if (position.rooms[0].name + "," + position.rooms[1].name == value || position.rooms[1].name + "," + position.rooms[0].name) {
                     value = "h," + value;
                     canEmit = true;
-                    break
+                    break;
                 }
             }
         }
@@ -203,11 +231,6 @@ function move(value) {
         endMoveAnimation();
         socket.emit('move', {position:value});
     }
-}
-
-function reveal() {
-    const cardElement = document.getElementById('selectClue');
-    socket.emit('disprove', {card:cardElement.value});
 }
 
 function endTurn() {
@@ -250,7 +273,7 @@ if (document.title == "Clue-less - Lobby") {
                         character:characterSelection
                     });
                 } else {
-                    sendChatMessage("Error: Character or Weapon is null.")
+                    sendChatMessage("Error: Character or Weapon is null.");
                 }
             } else if (parent.id == "accusation-popup") {
                 if (characterSelection != null && roomSelection != null && weaponSelection != null) {
@@ -260,24 +283,31 @@ if (document.title == "Clue-less - Lobby") {
                         weapon:weaponSelection
                     });
                 } else {
-                    sendChatMessage("Error: Character, Room, or Weapon is null.")
+                    sendChatMessage("Error: Character, Room, or Weapon is null.");
                 }
             } else if (parent.id == "disproof-popup") {
-
+                const disproofCardName = document.getElementById("suggestion-card-holder").value;
+                if (disproofCardName == "No selection") {
+                    sendChatMessage("No card selected.");
+                } else if (!boardObject.knownCards.includes(disproofCardName)) {
+                    sendChatMessage("You do not own that card.");
+                } else {
+                    socket.emit('disprove', {card:disproofCardName});
+                }
             } else {
-                console.log("ERROR: Submit button not a member of a valid popup.")
+                console.log("ERROR: Submit button not a member of a valid popup.");
             }
         })
     }
-
-    // Repeated Replication Requests
-    async function RRR() {
-        while (true) {
-            socket.emit('requestReplication');
-            await sleep(2000);
-        }
-    }
-    RRR();
-
+    
     socket.emit('game_connection');
 }
+
+// Repeated Replication Requests
+async function RRR() {
+    while (true) {
+        socket.emit('requestReplication');
+        await sleep(2000);
+    }
+}
+RRR();

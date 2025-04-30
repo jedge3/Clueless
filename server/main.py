@@ -106,7 +106,7 @@ def start_lobby(data):
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None:
         if lobby.is_owner(sender_id):
-            if len(lobby.get_players()) >= 2:
+            if len(lobby.get_players()) >= 2 and lobby.board == None:
                 lobby.start_game()
                 board = lobby.get_board()
                 cards = board.get_character_from_playerid(sender_id).cards
@@ -330,6 +330,7 @@ def request_replication():
     if lobby is not None:
         board = lobby.get_board()
         if board is not None:
+            emit('redirect', {'name':'game'})
             emit('replicate', board.get_replicate_data(sender_id))
         else:
             emit('redirect', {'name':'lobby'})

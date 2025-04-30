@@ -39,6 +39,7 @@ export class Board {
         this.characterIndex = -1;
         this.knownCards = [];
         this.turn = 0;
+        this.disproofTurn = -1;
 
         this.rooms = {};
         for (let roomName of ROOM_NAMES) {
@@ -157,6 +158,10 @@ export class Board {
 
     isOurTurn() {
         return this.characterIndex == this.turn;
+    }
+
+    isOurTurnDisproof() {
+        return this.characterIndex == this.disproofTurn;
     }
 }
 

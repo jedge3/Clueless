@@ -7,6 +7,10 @@ export function removeCardSelection() {
     characterSelection = null;
     roomSelection = null;
     weaponSelection = null;
+    for (let card of document.getElementsByClassName("card")) {
+        card.style.animation = "none";
+    }
+    document.getElementById("suggestion-card-holder").value = "No selection"
 }
 
 export function newCard(name) {
@@ -27,10 +31,12 @@ export function newCard(name) {
     container.className = "container"
     button.appendChild(container);
 
-    let icon = document.createElement("img");
-    icon.id = "icon";
-    icon.src = img
-    container.append(icon);
+    if (name != "None") {
+        let icon = document.createElement("img");
+        icon.id = "icon";
+        icon.src = img;
+        container.append(icon);
+    }
 
     let namelabel = document.createElement("div");
     namelabel.textContent = name;
@@ -40,7 +46,7 @@ export function newCard(name) {
     return button;
 }
 
-function handleSelect(card) {
+export function handleSelect(card) {
     card.addEventListener("click", function() {
         const parent = card.parentNode;
         for (let child of parent.children) {
@@ -56,9 +62,10 @@ function handleSelect(card) {
             roomSelection = card.id;
         } else if (WEAPON_NAMES.includes(card.id)) {
             weaponSelection = card.id;
-        } else {
+        } else if (card.id != "None") {
             console.log("ERROR: Card is not a character, room, or weapon.")
         }
+        parent.value = card.id;
     })
 }
 

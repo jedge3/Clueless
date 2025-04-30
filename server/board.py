@@ -306,6 +306,9 @@ class Board():
         data['roomName'] = [""] * 6
         data['room1Name'] = [""] * 6
         data['room2Name'] = [""] * 6
+        data['suggesting'] = self.suggesting
+        data['suggestionCards'] = [self.suggested_character, self.suggested_room, self.suggested_weapon]
+        data['disproofTurn'] = self.disproof_turn
         for i, character in enumerate(self.characters):
             if isinstance(character.position, Room):
                 data['isRoom'][i] = True

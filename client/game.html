@@ -148,12 +148,12 @@
     <div id="right-side-ui">
         <div class="profile-container">
             <h2>Player Profile:</h2>
-            <br>
             <img id="characterImageLabel" src="assets/images/characters/empty.png" width="250" height="250">
-            <br>
             <label id="characterLabel">Your character is undetermined.</label>
             <br>
             <label id="turnLabel">It is Col. Mustard's turn.</label>
+            <br>
+            <label id="disproofTurnLabel">It is noone's turn to disprove.</label>
         </div>
         <br>
         <div class="card-holder" id="card-holder" value="true">
@@ -178,7 +178,7 @@
     <div class="popup" id="disproof-popup"> 
         <div class="close-button">X</div> 
         <div class="title">Select which card to disprove:</div>
-        <div class="suggestion-card-holder"></div>
+        <div class="suggestion-card-holder" id="suggestion-card-holder" value="No selection"></div>
         <button class="submit-button">Submit</button>
     </div>
 

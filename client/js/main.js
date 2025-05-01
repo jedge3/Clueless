@@ -1,8 +1,9 @@
-const socket = io("http://localhost:5000");
+import { socket } from "./socketConnection.js"
 export let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1].split(".")[0];  // Path to the HTML file
 import { boardObject, CHARACTER_NAMES, Hallway, Room} from "./board.js";
 import { moveAnimatingElements, endMoveAnimation } from "./actionButtons.js";
 import { newCard, characterSelection, roomSelection, weaponSelection, handleSelect } from "./card.js";
+import { sendChatMessage } from "./chat.js";
 
 console.log("Started client!");
 
@@ -40,25 +41,11 @@ function startConnection() {
     }
 }
 
-function sendChatMessage(msg) {
-    console.log(msg);
-    const chat = document.getElementById('chat');
-    const message = document.createElement('div');
-    message.textContent = msg;
-    message.style.marginBottom = "6px";
-    chat.appendChild(message);
-    chat.scrollTop = chat.scrollHeight;
-}
-
 socket.on('connect', startConnection)
 socket.on('getId', startConnection);
 
 socket.on('setId', function(id) {
     setCookie('socketId', id, 7);
-});
-
-socket.on('message', function(msg) {
-    sendChatMessage("[Server]: " + msg);
 });
 
 socket.on('redirect', function(data) {

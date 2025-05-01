@@ -72,7 +72,7 @@ def join_lobby(data):
             return
         success = lobby.add_player(sender_id)
         if success:
-            socketio.emit('message', f'Player [{short(sender_id)}] has joined the lobby.', room=lobby_id)
+            lobby.send_message(f'Player [{short(sender_id)}] has joined the lobby.')
             join_room(lobby_id)
             emit('message', "Successfully joined the lobby.")
         else:
@@ -91,7 +91,7 @@ def leave_lobby(data):
         lobby.remove_player(sender_id)
         leave_room(lobby.get_id())
         emit('message', "Successfully left the lobby.")
-        socketio.emit('message', f'Player [{short(sender_id)}] has left the lobby.', room=lobby.get_id())
+        lobby.send_message(f'Player [{short(sender_id)}] has left the lobby.')
     else:
         emit('message', "You are not in a lobby.")
 
@@ -112,7 +112,7 @@ def start_lobby(data):
                 cards = board.get_character_from_playerid(sender_id).cards
                 for i, card in enumerate(cards):
                     cards[i] = card
-                emit('message', "Starting game...", room=lobby.get_id())
+                lobby.send_message("Starting game...")
                 emit('redirect', {'name':'game'}, room=lobby.get_id())
             else:
                 emit('message', "Not enough players to start.")
@@ -172,7 +172,7 @@ def suggest(data):
                     weapon = data['weapon']
                     character = data['character']
                     board.suggester = request.sid
-                    emit('message', f'{player_character.name} suggests {room}, {weapon}, {character}.', room=lobby.get_id())
+                    lobby.send_message(f'{player_character.name} suggests {character} did it in the {room} with the {weapon}.')
                 else:
                     emit('message', "Invalid suggestion.")
             else:
@@ -199,23 +199,25 @@ def accuse(data):
                 character = board.get_character_from_playerid(sender_id)
             
                 if success == True:
-                    emit('message', f"{character.name} has successfully accused the murderer. Game over.", room=lobby.get_id())
+                    lobby.send_message(f"{character.name} has successfully accused the murderer. Game over.")
                     emit('message', "Correct accusation. You have won!")
                     time.sleep(5)
 
                     lobby.end_game()
+                    lobby.send_message("Returning to lobby...")
                     emit('redirect', {'name':'lobby'}, room=lobby.get_id())
                 elif success == False:
                     if board.game_over:
                         emit('message', "Incorrect accusation. You have been eliminated.")
-                        emit('message', f"{character.name} has been eliminated by a false accusation. All players have been eliminated. Game over.", room=lobby.get_id())
+                        lobby.send_message(f"{character.name} has been eliminated by a false accusation. All players have been eliminated. Game over.")
                         time.sleep(5)
 
                         lobby.end_game()
+                        lobby.send_message("Returning to lobby...")
                         emit('redirect', {'name':'lobby'}, room=lobby.get_id())
                     else:
                         emit('message', "Incorrect accusation. You have been eliminated.")
-                        emit('message', f"{character.name} has been eliminated by a false accusation.", room=lobby.get_id())
+                        lobby.send_message(f"{character.name} has been eliminated by a false accusation.")
                 else:
                     emit('message', "Cannot accuse at this time.")
             else:
@@ -243,13 +245,13 @@ def disprove(data):
                     success = board.disprove(data)
                     character = board.get_character_from_playerid(sender_id)
                     if success:
-                        emit('message', f"{character.name} was able to disprove the suggestion.", room=lobby.get_id())
+                        lobby.send_message(f"{character.name} was able to disprove the suggestion.")
                         socketio.emit('message', f'You have recieved the card {data['card']}.', to=board.suggester)
                     else:
                         if board.suggesting:
-                            emit('message', f"{character.name} was unable to disprove the suggestion.", room=lobby.get_id())
+                            lobby.send_message(f"{character.name} was unable to disprove the suggestion.")
                         else:
-                            emit('message', "Noone was able to disprove the suggestion.", room=lobby.get_id())
+                            lobby.send_message("Noone was able to disprove the suggestion.")
                 else:
                     emit('message', "That is not a valid disproof.")
             else:
@@ -274,7 +276,7 @@ def end_turn():
                 success = board.end_turn()
                 character = board.get_character_from_playerid(sender_id)
                 if success:
-                    emit('message', f'Player {character.name} has ended their turn.', room=lobby.get_id())
+                    lobby.send_message(f'Player {character.name} has ended their turn.')
                     socketio.emit('replicate', board.get_replicate_data(sender_id))
                 else:
                     emit('message', "Unable to end your turn at this moment.")
@@ -329,11 +331,28 @@ def request_replication():
     lobby = Lobby.get_lobby_from_player(sender_id)
     if lobby is not None:
         board = lobby.get_board()
+        emit('messageHistory', lobby.get_messages())
         if board is not None:
             emit('redirect', {'name':'game'})
             emit('replicate', board.get_replicate_data(sender_id))
         else:
             emit('redirect', {'name':'lobby'})
+
+
+@socketio.on('sendMessage')
+def sendMessage(msg):
+    if msg != "":
+        sender_id = session.get('id')
+        if sender_id is None:
+            return
+        lobby = Lobby.get_lobby_from_player(sender_id)
+        if lobby is not None:
+            prefix = "[" + short(sender_id) + "]: "
+            board = lobby.get_board()
+            if board != None:
+                prefix = board.get_character_from_playerid(sender_id).name + ": "
+            lobby.send_message(prefix + msg)
+            emit('messageHistory', lobby.get_messages())
 
 
 if __name__ == "__main__":

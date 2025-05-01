@@ -46,6 +46,7 @@ class Lobby():
         self.lobby_id = get_unique_id()
 
         self.board = None
+        self.messages = []
 
         Lobby.add_instance(self)
 
@@ -95,3 +96,11 @@ class Lobby():
     
     def get_board(self):
         return self.board
+    
+
+    def send_message(self, msg):
+        self.messages.append(msg)
+
+
+    def get_messages(self):
+        return self.messages

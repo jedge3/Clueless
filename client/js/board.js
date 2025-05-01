@@ -40,6 +40,7 @@ export class Board {
         this.knownCards = [];
         this.turn = 0;
         this.disproofTurn = -1;
+        this.suggesting = false;
 
         this.rooms = {};
         for (let roomName of ROOM_NAMES) {

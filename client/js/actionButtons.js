@@ -49,7 +49,9 @@ function openSuggestionPopup() {
         closeAllPopups()
     } else {
         closeAllPopups()
-        document.getElementById("suggestion-popup").style.display = "flex";
+        if (boardObject.isOurTurn()) {
+            document.getElementById("suggestion-popup").style.display = "flex";
+        }
     }
 }
 
@@ -59,7 +61,9 @@ function openAccusationPopup() {
         closeAllPopups()
     } else {
         closeAllPopups()
-        document.getElementById("accusation-popup").style.display = "flex";
+        if (boardObject.isOurTurn()) {
+            document.getElementById("accusation-popup").style.display = "flex";
+        }
     }
 }
 

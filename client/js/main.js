@@ -66,76 +66,13 @@ socket.on('redirect', function(data) {
 socket.on('replicate', function(data) {
     console.log("Replication request recieved.");
     console.log(data);
-    // Update character index and cards
-    if (data['characterIndex'] != null) {
-        boardObject.characterIndex = data['characterIndex'];
-        boardObject.knownCards = data['cards'];
 
-        // Update character label
-        const characterLabel = document.getElementById("characterLabel");
-        characterLabel.textContent = "Your character is " + CHARACTER_NAMES[boardObject.characterIndex] + ".";
-        const characterImageLabel = document.getElementById("characterImageLabel");
-        characterImageLabel.src = document.getElementById(CHARACTER_NAMES[boardObject.characterIndex]).src;
-        
-        // Update character's cards
-        const cardHolder = document.getElementById("card-holder");
-        if (cardHolder.value != data['cards'].length + data['obtainedCards'].length) {
-            cardHolder.value = data['cards'].length + data['obtainedCards'].length;
-            cardHolder.innerHTML = "";
-
-            // Dealt cards
-            for (let cardName of boardObject.knownCards) {
-                const card = newCard(cardName);
-                cardHolder.appendChild(card);
-            }
-
-            // Obtained cards
-            for (let cardName of data['obtainedCards']) {
-                const card = newCard(cardName);
-                cardHolder.appendChild(card);
-                card.style.filter = "brightness(0.5)";
-                card.style.opacity = 0.8;
-            }
-
-        }
-    }
-    
-    // Update turn
-    boardObject.turn = data['turn'];
-    const turnLabel = document.getElementById("turnLabel");
-    if (boardObject.isOurTurn()) {
-        turnLabel.textContent = "It is your turn.";
-    } else {
-        turnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn.";
-    }
-
-    // Update disproof turn
+    // Update board index values
+    boardObject.characterIndex = data['characterIndex'];
+    boardObject.knownCards = data['cards'];
+    boardObject.suggesting = data['suggesting'];
     boardObject.disproofTurn = data['disproofTurn'];
-    const disproofTurnLabel = document.getElementById("disproofTurnLabel");
-    if (!data["suggesting"]) {
-        disproofTurnLabel.textContent = "It is noone's turn to disprove."
-    } else if (boardObject.isOurTurnDisproof()) {
-        disproofTurnLabel.textContent = "It is your turn to disprove.";
-    } else {
-        disproofTurnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn to disprove.";
-    }
-
-    // Update disproof popup cards
-    const cardHolder = document.getElementById("suggestion-card-holder");
-    if (!data["suggesting"]) {
-        cardHolder.innerHTML = "";
-    } else {
-        if (cardHolder.innerHTML == "") {
-            for (let cardName of data['suggestionCards']) {
-                const card = newCard(cardName);
-                cardHolder.appendChild(card);
-                handleSelect(card);
-            }
-            const noCard = newCard("None");
-            cardHolder.appendChild(noCard);
-            handleSelect(noCard);
-        }
-    }
+    boardObject.turn = data['turn'];
 
     // Update character positions
     for (let i = 0; i < 6; i++) {
@@ -155,6 +92,69 @@ socket.on('replicate', function(data) {
         }
     }
 
+    // Update character label
+    const characterLabel = document.getElementById("characterLabel");
+    characterLabel.textContent = "Your character is " + CHARACTER_NAMES[boardObject.characterIndex] + ".";
+    const characterImageLabel = document.getElementById("characterImageLabel");
+    characterImageLabel.src = document.getElementById(CHARACTER_NAMES[boardObject.characterIndex]).src;
+    
+    // Update character's cards
+    const cardHolder = document.getElementById("card-holder");
+    if (cardHolder.value != data['cards'].length + data['obtainedCards'].length) {
+        cardHolder.value = data['cards'].length + data['obtainedCards'].length;
+        cardHolder.innerHTML = "";
+
+        // Dealt cards
+        for (let cardName of boardObject.knownCards) {
+            const card = newCard(cardName);
+            cardHolder.appendChild(card);
+        }
+
+        // Obtained cards
+        for (let cardName of data['obtainedCards']) {
+            const card = newCard(cardName);
+            cardHolder.appendChild(card);
+            card.style.filter = "brightness(0.5)";
+            card.style.opacity = 0.8;
+        }
+    }
+
+    // Update turn
+    const turnLabel = document.getElementById("turnLabel");
+    if (boardObject.isOurTurn()) {
+        turnLabel.textContent = "It is your turn.";
+    } else {
+        turnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn.";
+    }
+
+    // Update disproof turn
+    const disproofTurnLabel = document.getElementById("disproofTurnLabel");
+    if (!boardObject.suggesting) {
+        disproofTurnLabel.textContent = "It is noone's turn to disprove."
+    } else if (boardObject.isOurTurnDisproof()) {
+        disproofTurnLabel.textContent = "It is your turn to disprove.";
+    } else {
+        disproofTurnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn to disprove.";
+    }
+
+    // Update disproof popup cards
+    const suggestionCardHolder = document.getElementById("suggestion-card-holder");
+    if (!boardObject.suggesting) {
+        suggestionCardHolder.innerHTML = "";
+    } else {
+        if (suggestionCardHolder.innerHTML == "") {
+            for (let cardName of data['suggestionCards']) {
+                const card = newCard(cardName);
+                suggestionCardHolder.appendChild(card);
+                handleSelect(card);
+            }
+            const noCard = newCard("None");
+            suggestionCardHolder.appendChild(noCard);
+            handleSelect(noCard);
+        }
+    }
+
+    // Move characters on board
     for (let i = 0; i < 6; i++) {
         let character = boardObject.characters[i];
         let characterDiv = document.getElementById(character.name);

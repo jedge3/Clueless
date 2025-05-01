@@ -275,7 +275,7 @@ def end_turn():
                 success = board.end_turn()
                 character = board.get_character_from_playerid(sender_id)
                 if success:
-                    lobby.send_message(f'Player {character.name} has ended their turn.')
+                    lobby.send_message(f'{character.name} has ended their turn.')
                     emit('replicate', board.get_replicate_data(sender_id))
                 else:
                     emit('message', "Unable to end your turn at this moment.")
@@ -300,7 +300,7 @@ def lobby_connection():
         else:
             for player_id in lobby.get_players():
                 emit('message', f'Player [{short(player_id)}] has joined the lobby.')
-    
+
 
 @socketio.on('game_connection')
 def game_connect():

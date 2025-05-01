@@ -134,7 +134,7 @@ socket.on('replicate', function(data) {
     } else if (boardObject.isOurTurnDisproof()) {
         disproofTurnLabel.textContent = "It is your turn to disprove.";
     } else {
-        disproofTurnLabel.textContent = "It is " + CHARACTER_NAMES[data['turn']] + "'s turn to disprove.";
+        disproofTurnLabel.textContent = "It is " + CHARACTER_NAMES[boardObject.disproofTurn] + "'s turn to disprove.";
     }
 
     // Update disproof popup cards

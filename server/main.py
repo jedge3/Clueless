@@ -149,7 +149,6 @@ def move(data):
             socketio.emit('message', "You are not currently in a game.")
         
 
-
 @socketio.on('suggest')
 def suggest(data):
     print("[Server Networking Subsystem] Game suggestion request recieved.")

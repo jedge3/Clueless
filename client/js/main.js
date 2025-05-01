@@ -143,13 +143,13 @@ socket.on('replicate', function(data) {
         if (data['isRoom'][i]) {
             newPosition = boardObject.rooms[data['roomName'][i]];
             if (boardObject.characters[i].position != newPosition) {
-                sendChatMessage("[Replication]: " + CHARACTER_NAMES[i] + " moved to " + newPosition.name + ".");
+                // sendChatMessage("[Replication]: " + CHARACTER_NAMES[i] + " moved to " + newPosition.name + ".");
                 boardObject.characters[i].position = newPosition;
             }
         } else {
             newPosition = boardObject.getHallwayFromRoomNames(data['room1Name'][i], data['room2Name'][i]);
             if (boardObject.characters[i].position != newPosition) {
-                sendChatMessage("[Replication]: " + CHARACTER_NAMES[i] + " moved to the " + boardObject.getPositionName(newPosition) + ".");
+                // sendChatMessage("[Replication]: " + CHARACTER_NAMES[i] + " moved to the " + boardObject.getPositionName(newPosition) + ".");
                 boardObject.characters[i].position = newPosition;
             }
         }
@@ -205,7 +205,7 @@ function move(value) {
     if (moveAnimatingElements.length == 0) {
         return;
     }
-
+    
     let canEmit = false;
     for (let position of boardObject.getMovablePositions()) {
         if (position instanceof Room) {
@@ -216,7 +216,7 @@ function move(value) {
             }
         } else {
             if (position instanceof Hallway) {
-                if (position.rooms[0].name + "," + position.rooms[1].name == value || position.rooms[1].name + "," + position.rooms[0].name) {
+                if (position.rooms[0].name + "," + position.rooms[1].name == value || position.rooms[1].name + "," + position.rooms[0].name == value) {
                     value = "h," + value;
                     canEmit = true;
                     break;
@@ -224,6 +224,7 @@ function move(value) {
             }
         }
     }
+
     if (canEmit) {
         endMoveAnimation();
         socket.emit('move', {position:value});

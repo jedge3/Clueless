@@ -190,9 +190,9 @@ class Board():
         
         character = self.get_character_from_playerid(data['player_id'])
         pos_split = str.split(data['position'], ",")
-
+        print(pos_split)
         if pos_split[0] == "r": # Moving to a room
-            print("Moving to a room")
+            print(f"Moving to the {pos_split[1]}.")
             room = self.rooms.get(pos_split[1])
             if isinstance(character.position, Hallway) and room in character.position.rooms:
                 character.move_to(room)

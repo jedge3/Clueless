@@ -104,7 +104,6 @@ export class Board {
         let attached_hallways = []
         for (let hallway of this.hallways) {
             if (hallway.rooms.includes(room.Name)) {
-                console.log(hallway.rooms)
                 attached_hallways.push(hallway);
             } else if (room.hallways.includes(hallway)) {
                 attached_hallways.push(hallway);
@@ -114,7 +113,6 @@ export class Board {
     }
     
     getPositionName(position) {
-        console.log(position)
         if (position instanceof Room) {
             return position.name;
         } else if (position instanceof Hallway) {

@@ -140,7 +140,7 @@ def move(data):
                 success = board.move(data)
                 if success:
                     print("replicating game state")
-                    socketio.emit('replicate', board.get_replicate_data(sender_id))
+                    emit('replicate', board.get_replicate_data(sender_id))
                 else:
                     emit('message', "An error occured.")
             else:
@@ -276,7 +276,7 @@ def end_turn():
                 character = board.get_character_from_playerid(sender_id)
                 if success:
                     lobby.send_message(f'Player {character.name} has ended their turn.')
-                    socketio.emit('replicate', board.get_replicate_data(sender_id))
+                    emit('replicate', board.get_replicate_data(sender_id))
                 else:
                     emit('message', "Unable to end your turn at this moment.")
             else:

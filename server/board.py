@@ -325,6 +325,8 @@ class Board():
             data['characterIndex'] = self.player_list.index(player_id)
             data['cards'] = character.cards
             data['obtainedCards'] = character.obtained_cards
+        else:
+            print("REPLICATION ERROR")
 
         # send game state data to the client
         return data

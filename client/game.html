@@ -182,6 +182,44 @@
         <div class="suggestion-card-holder" id="suggestion-card-holder" value="No selection"></div>
         <button class="submit-button">Submit</button>
     </div>
+    <div class="popup" id="information-popup"> 
+        <div class="close-button">X</div> 
+
+        <div class="title">How to play Clue-Less:</div>
+        <p>When it is your turn, do any of these 3:</p>
+        <p style="text-indent: 2em;">a. Move to a new location.</p>
+        <p style="text-indent: 2em;">b. Make a suggestion.</p>
+        <p style="text-indent: 2em;">c. Make an accusation.</p>
+        <br>
+        
+        <div class="title">How to make a move:</div>
+        <p style="text-indent: 2em;">When it is your turn, you may move once.</p>
+        <p style="text-indent: 2em;">If it your first turn, you must move to the highlighted hallway.</p>
+        <p style="text-indent: 2em;">Otherwise, you can move to any of the adjacent hallways/rooms or through a room's passage from one diagonal to another.</p>
+        <p style="text-indent: 2em;">You may not move to a hallway occupied by another player.</p>
+        <p style="text-indent: 2em;">Select the move button and click on one of the highlighted positions on the board.</p>
+        <br>
+
+        <div class="title">How to make a suggestion:</div>
+        <p style="text-indent: 2em;">When it is your turn, you can make at most one suggestion.</p>
+        <p style="text-indent: 2em;">You must be in a room to make a suggestion.</p>
+        <p style="text-indent: 2em;">Click the suggest button then select the character and weapon for the suggestion and press the submit button.</p>
+        <p style="text-indent: 2em;">Players will take turns trying to disprove the suggestion. The first player to do so will grant you one of their cards.</p>
+        <br>
+
+        <div class="title">How to disprove a suggestion:</div>
+        <p style="text-indent: 2em;">When a player makes a suggestion, once it becomes your turn to disprove, if one of your starting cards disproves the suggestion, you must share it with the suggesting player.</p>
+        <p style="text-indent: 2em;">Click on the disprove button then select the card you can use to disprove the suggestion.</p>
+        <p style="text-indent: 2em;">If you cannot disprove a suggestion, you may use the 'None' card. This will allow the next player to disprove the suggestion.</p>
+        <p style="text-indent: 2em;">The suggesting player will be granted a dummy version of this card that cannot be used to disprove suggestions.</p>
+        <br>
+
+        <div class="title">How to make an accusation:</div>
+        <p style="text-indent: 2em;">When you are confident you know who, where, and how, you may make an accusation.</p>
+        <p style="text-indent: 2em;">Click on the accuse button then select the character, room, and weapon for the accusation and press the submit button.</p>
+        <p style="text-indent: 2em;">If the accusation is correct, you win the game.</p>
+        <p style="text-indent: 2em;">If the accusation is incorrect, you are eliminated and must stick around to disprove player's suggestions.</p>
+    </div>
 
     <script type="module" src="js/main.js"></script>
 </body>

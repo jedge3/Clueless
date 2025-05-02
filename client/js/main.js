@@ -1,7 +1,7 @@
 import { socket } from "./socketConnection.js"
 export let fileName = document.location.pathname.split("/")[document.location.pathname.split("/").length - 1].split(".")[0];  // Path to the HTML file
 import { boardObject, CHARACTER_NAMES, Hallway, Room} from "./board.js";
-import { moveAnimatingElements, endMoveAnimation } from "./actionButtons.js";
+import { moveAnimatingElements, endMoveAnimation, closeAllPopups } from "./actionButtons.js";
 import { newCard, characterSelection, roomSelection, weaponSelection, handleSelect } from "./card.js";
 import { sendChatMessage } from "./chat.js";
 
@@ -295,6 +295,7 @@ if (document.title == "Clue-less - Lobby") {
             } else {
                 console.log("ERROR: Submit button not a member of a valid popup.");
             }
+            closeAllPopups();
         })
     }
     

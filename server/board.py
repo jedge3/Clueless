@@ -11,6 +11,7 @@ class Character():
         self.position = position
         self.cards = []
         self.obtained_cards = []
+        self.suggestion_cd = False
 
     
     def move_to(self, position):
@@ -213,6 +214,7 @@ class Board():
             print("An error has occured")
             return False
 
+        character.suggestion_cd = False
         self.moved = True
         return True
 
@@ -226,10 +228,12 @@ class Board():
 
     def suggest(self, data):
         print("[Game Logic Subsystem]: Recieved suggestion request. Each player will decide which card to show the suggester, if they have one of the cards.")
-        if self.suggested:
-            return False
-        
         character = self.get_character_from_playerid(data['player_id'])
+
+        if self.suggested or character.suggestion_cd:
+            return False
+        character.suggestion_cd = True
+        
         room = character.position
         if isinstance(room, Room):
             if room.name in ROOM_NAMES and data['weapon'] in WEAPON_NAMES and data['character'] in CHARACTER_NAMES:

@@ -287,7 +287,7 @@ if (document.title == "Clue-less - Lobby") {
                 const disproofCardName = document.getElementById("suggestion-card-holder").value;
                 if (disproofCardName == "No selection") {
                     sendChatMessage("No card selected.");
-                } else if (!boardObject.knownCards.includes(disproofCardName)) {
+                } else if (!boardObject.knownCards.includes(disproofCardName) && disproofCardName != "None") {
                     sendChatMessage("You do not own that card.");
                 } else {
                     socket.emit('disprove', {card:disproofCardName});

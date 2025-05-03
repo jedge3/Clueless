@@ -353,7 +353,7 @@ body {
 #information-popup {
     padding-top:5px;
     padding-left:5px;
-    display:inline;
+    display:none;
     width:41%;
 }
 
